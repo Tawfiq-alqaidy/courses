@@ -104,20 +104,35 @@
                 <span class="app-brand-text demo text-heading fw-bold">تسجيل الدخول</span>
               </a>
             </div>
-            <!-- /Logo -->
-            <h4 class="mb-1">مرحبًا بك مجددًا 👋</h4>
-            <p class="mb-6">يرجى منك تسجيل دخولك لحسابك لإستخدام النظام</p>
+                        <!-- /Logo -->
+            <h4 class="mb-1">مرحباً بك! 👋</h4>
+            <p class="mb-6">يرجى تسجيل الدخول إلى حسابك</p>
 
-            <form id="formAuthentication" class="mb-6" method="post" action="index.php">
+            <!-- Login Form -->
+            <form id="formAuthentication" class="mb-6" action="{{ route('login') }}" method="POST">
+              @csrf
+              
+              @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                  @foreach ($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                  @endforeach
+                </div>
+              @endif
+
               <div class="mb-6">
-                <label for="email" class="form-label">البريد الإلكتروني أو رقم الهاتف</label>
+                <label for="email" class="form-label">البريد الإلكتروني</label>
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control @error('email') is-invalid @enderror"
                   id="email"
-                  name="email-username"
-                  placeholder="net2Decoder@email.com"
+                  name="email"
+                  value="{{ old('email') }}"
+                  placeholder="أدخل البريد الإلكتروني"
                   autofocus />
+                @error('email')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
               </div>
               <div class="mb-6 form-password-toggle">
                 <label class="form-label" for="password">كلمة المرور</label>
@@ -125,33 +140,36 @@
                   <input
                     type="password"
                     id="password"
-                    class="form-control"
+                    class="form-control @error('password') is-invalid @enderror"
                     name="password"
                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                     aria-describedby="password" />
                   <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                 </div>
+                @error('password')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
               </div>
               <div class="mb-8">
                 <div class="d-flex justify-content-between mt-8">
                   <div class="form-check mb-0 ms-2">
-                    <input class="form-check-input" type="checkbox" id="remember-me" />
+                    <input class="form-check-input" type="checkbox" id="remember-me" name="remember" />
                     <label class="form-check-label" for="remember-me"> تذكرني </label>
                   </div>
-                  <a href="auth-forgot-password-basic.html">
-                    <span>نسيت كلمة السر</span>
+                  <a href="#">
+                    <p class="mb-0">نسيت كلمة المرور؟</p>
                   </a>
                 </div>
               </div>
               <div class="mb-6">
-                <button class="btn btn-primary d-grid w-100" type="submit">الدخول</button>
+                <button class="btn btn-primary d-grid w-100" type="submit">تسجيل الدخول</button>
               </div>
             </form>
 
             <p class="text-center">
-              <span>ليس لديك حساب ?</span>
-              <a href="auth-register-basic.html">
-                <span>إنشاء حساب جديد</span>
+              <span>جديد على منصتنا؟</span>
+              <a href="{{ route('register') }}">
+                <span>إنشاء حساب</span>
               </a>
             </p>
           </div>
