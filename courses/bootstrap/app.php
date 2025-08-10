@@ -1,5 +1,8 @@
 <?php
 
+// Load mbstring polyfill for missing functions
+require_once __DIR__ . '/mbstring-polyfill.php';
+
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;

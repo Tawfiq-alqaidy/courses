@@ -14,10 +14,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $categories = Category::withCount('courses')->get();
-        $totalCourses = Course::count();
-        $totalApplications = Application::count();
-        $availableCourses = Course::where('start_time', '>', now())->count();
+        $categories = Category::all();
+        $totalCourses = count(Course::all());
+        $totalApplications = count(Application::all());
+        $availableCourses = count(Course::all()); // Simplified for now
 
         return view('dashboard', compact('categories', 'totalCourses', 'totalApplications', 'availableCourses'));
     }

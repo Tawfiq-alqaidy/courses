@@ -14,8 +14,8 @@ class ApplicationController extends Controller
      */
     public function showForm()
     {
-        $categories = Category::with('courses')->get();
-        $courses = Course::with('category')->get();
+        $categories = Category::all();
+        $courses = Course::all();
         
         return view('application-form', compact('categories', 'courses'));
     }

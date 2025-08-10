@@ -31,6 +31,15 @@ return [
 
     'connections' => [
 
+        'array' => [
+            'driver' => 'array',
+        ],
+
+        'file' => [
+            'driver' => 'file',
+            'database' => storage_path('app/database.json'),
+        ],
+
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),

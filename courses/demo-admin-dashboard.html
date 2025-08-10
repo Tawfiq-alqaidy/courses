@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الإدارية - Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 280px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: right;
+        }
+        
+        .menu-item:hover,
+        .menu-item.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(-5px);
+        }
+        
+        .main-content {
+            margin-right: 280px;
+            padding: 2rem;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border: none;
+            height: 100%;
+        }
+        
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .data-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            border: none;
+            font-weight: 600;
+            padding: 1rem;
+        }
+        
+        .table td {
+            border: none;
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-registered { background: #d4edda; color: #155724; }
+        .status-waiting { background: #fff3cd; color: #856404; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        
+        .btn-action {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin: 0 0.2rem;
+        }
+        
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="text-white fw-bold mb-0">
+                <i class="bx bx-shield-check me-2"></i>
+                لوحة التحكم
+            </h4>
+            <small class="text-white-50">إدارة النظام</small>
+        </div>
+        
+        <div class="sidebar-menu">
+            <button class="menu-item active" onclick="showSection('dashboard')">
+                <i class="bx bx-home me-2"></i>
+                الرئيسية
+            </button>
+            <button class="menu-item" onclick="showSection('applications')">
+                <i class="bx bx-file-blank me-2"></i>
+                الطلبات
+                <span class="badge bg-warning ms-2">12</span>
+            </button>
+            <button class="menu-item" onclick="showSection('courses')">
+                <i class="bx bx-book me-2"></i>
+                الدورات
+            </button>
+            <button class="menu-item" onclick="showSection('categories')">
+                <i class="bx bx-category me-2"></i>
+                التصنيفات
+            </button>
+            <hr class="my-3" style="border-color: rgba(255,255,255,0.1);">
+            <button class="menu-item" onclick="logout()">
+                <i class="bx bx-log-out me-2"></i>
+                تسجيل الخروج
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="btn btn-primary d-md-none position-fixed" style="top: 1rem; left: 1rem; z-index: 1001;" onclick="toggleSidebar()">
+        <i class="bx bx-menu"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="content-section">
+            <div class="page-header">
+                <h2 class="fw-bold mb-3">
+                    <i class="bx bx-home text-primary me-2"></i>
+                    نظرة عامة على النظام
+                </h2>
+                <p class="text-muted mb-0">مرحباً بك في لوحة التحكم الإدارية لإدارة الدورات التدريبية</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-primary text-white">
+                            <i class="bx bx-file-blank"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1">47</h3>
+                        <p class="text-muted mb-2">إجمالي الطلبات</p>
+                        <small class="text-success">
+                            <i class="bx bx-trending-up"></i>
+                            +12% من الشهر الماضي
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-success text-white">
+                            <i class="bx bx-check-circle"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1">28</h3>
+                        <p class="text-muted mb-2">طلبات مقبولة</p>
+                        <small class="text-success">
+                            <i class="bx bx-trending-up"></i>
+                            +8% من الشهر الماضي
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-warning text-white">
+                            <i class="bx bx-time"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1">12</h3>
+                        <p class="text-muted mb-2">قائمة الانتظار</p>
+                        <small class="text-warning">
+                            <i class="bx bx-minus"></i>
+                            نفس العدد
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-info text-white">
+                            <i class="bx bx-book"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1">8</h3>
+                        <p class="text-muted mb-2">الدورات النشطة</p>
+                        <small class="text-info">
+                            <i class="bx bx-plus"></i>
+                            +2 دورات جديدة
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Applications -->
+            <div class="data-table">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>رقم الطالب</th>
+                                <th>اسم الطالب</th>
+                                <th>الدورة</th>
+                                <th>الحالة</th>
+                                <th>تاريخ التقديم</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>STU-2025001</code></td>
+                                <td>أحمد محمد علي</td>
+                                <td>تطوير المواقع بـ Laravel</td>
+                                <td><span class="status-badge status-registered">مسجل</span></td>
+                                <td>2025/08/10</td>
+                                <td>
+                                    <button class="btn btn-sm btn-success btn-action">تأكيد</button>
+                                    <button class="btn btn-sm btn-danger btn-action">رفض</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>STU-2025002</code></td>
+                                <td>فاطمة أحمد سالم</td>
+                                <td>تصميم UI/UX المتقدم</td>
+                                <td><span class="status-badge status-waiting">قائمة الانتظار</span></td>
+                                <td>2025/08/10</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary btn-action">ترقية</button>
+                                    <button class="btn btn-sm btn-danger btn-action">رفض</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>STU-2025003</code></td>
+                                <td>محمد عبدالله حسن</td>
+                                <td>التسويق عبر وسائل التواصل</td>
+                                <td><span class="status-badge status-registered">مسجل</span></td>
+                                <td>2025/08/09</td>
+                                <td>
+                                    <button class="btn btn-sm btn-success btn-action">تأكيد</button>
+                                    <button class="btn btn-sm btn-danger btn-action">رفض</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>STU-2025004</code></td>
+                                <td>نور الدين طارق</td>
+                                <td>إدارة المشاريع الرقمية</td>
+                                <td><span class="status-badge status-rejected">مرفوض</span></td>
+                                <td>2025/08/09</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning btn-action">إعادة تفعيل</button>
+                                    <button class="btn btn-sm btn-info btn-action">تفاصيل</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications Section -->
+        <div id="applications-section" class="content-section" style="display: none;">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="fw-bold mb-1">إدارة الطلبات</h2>
+                        <p class="text-muted mb-0">عرض وإدارة جميع طلبات التسجيل في الدورات</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary" onclick="filterApplications('all')">
+                            <i class="bx bx-filter me-1"></i>جميع الطلبات
+                        </button>
+                        <button class="btn btn-outline-success" onclick="filterApplications('registered')">
+                            <i class="bx bx-check me-1"></i>مسجل
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="filterApplications('waiting')">
+                            <i class="bx bx-time me-1"></i>انتظار
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table">
+                <div class="p-3 border-bottom bg-light">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <input type="search" class="form-control" placeholder="البحث في الطلبات...">
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select">
+                                <option>جميع الدورات</option>
+                                <option>تطوير المواقع بـ Laravel</option>
+                                <option>تصميم UI/UX المتقدم</option>
+                                <option>التسويق عبر وسائل التواصل</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success btn-sm">
+                                    <i class="bx bx-check me-1"></i>تأكيد المحددة
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="bx bx-x me-1"></i>رفض المحددة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" class="form-check-input"></th>
+                                <th>رقم الطالب</th>
+                                <th>البيانات الشخصية</th>
+                                <th>الدورة المختارة</th>
+                                <th>الحالة</th>
+                                <th>ترتيب الانتظار</th>
+                                <th>التاريخ</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicationsTable">
+                            <!-- Applications will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses Section -->
+        <div id="courses-section" class="content-section" style="display: none;">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="fw-bold mb-1">إدارة الدورات</h2>
+                        <p class="text-muted mb-0">إضافة وتعديل وحذف الدورات التدريبية</p>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#courseModal">
+                        <i class="bx bx-plus me-1"></i>إضافة دورة جديدة
+                    </button>
+                </div>
+            </div>
+
+            <div class="row" id="coursesGrid">
+                <!-- Courses will be populated here -->
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div id="categories-section" class="content-section" style="display: none;">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="fw-bold mb-1">إدارة التصنيفات</h2>
+                        <p class="text-muted mb-0">تنظيم الدورات حسب التخصصات والمجالات</p>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                        <i class="bx bx-plus me-1"></i>إضافة تصنيف جديد
+                    </button>
+                </div>
+            </div>
+
+            <div class="data-table">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>اسم التصنيف</th>
+                                <th>عدد الدورات</th>
+                                <th>عدد الطلبات</th>
+                                <th>تاريخ الإنشاء</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bx bx-code text-primary me-2" style="font-size: 1.5rem;"></i>
+                                        <div>
+                                            <strong>البرمجة وتطوير الويب</strong>
+                                            <small class="d-block text-muted">تعلم البرمجة وتطوير التطبيقات</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-primary">3 دورات</span></td>
+                                <td><span class="badge bg-info">24 طلب</span></td>
+                                <td>2025/07/01</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary btn-action">تعديل</button>
+                                    <button class="btn btn-sm btn-outline-danger btn-action">حذف</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bx bx-palette text-success me-2" style="font-size: 1.5rem;"></i>
+                                        <div>
+                                            <strong>التصميم الجرافيكي</strong>
+                                            <small class="d-block text-muted">تصميم واجهات المستخدم والهوية البصرية</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-primary">2 دورة</span></td>
+                                <td><span class="badge bg-info">18 طلب</span></td>
+                                <td>2025/07/01</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary btn-action">تعديل</button>
+                                    <button class="btn btn-sm btn-outline-danger btn-action">حذف</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Modal -->
+    <div class="modal fade" id="courseModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">إضافة دورة جديدة</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">اسم الدورة</label>
+                                <input type="text" class="form-control" placeholder="مثال: دورة React المتقدمة">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">التصنيف</label>
+                                <select class="form-select">
+                                    <option>البرمجة وتطوير الويب</option>
+                                    <option>التصميم الجرافيكي</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">السعة القصوى</label>
+                                <input type="number" class="form-control" placeholder="20">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">تاريخ البداية</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">وقت البداية</label>
+                                <input type="time" class="form-control">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">وصف الدورة</label>
+                                <textarea class="form-control" rows="3" placeholder="اكتب وصفاً مختصراً عن الدورة..."></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary">حفظ الدورة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Alert Modal -->
+    <div class="modal fade" id="demoAlert" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="bx bx-info-circle me-2"></i>نسخة تجريبية
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">هذه نسخة تجريبية من لوحة التحكم الإدارية.</p>
+                    <p class="mb-3">للحصول على الوظائف الكاملة والتفاعل مع قاعدة البيانات، يجب:</p>
+                    <ul class="mb-0">
+                        <li>ترقية PHP إلى الإصدار 8.2 أو أحدث</li>
+                        <li>تشغيل <code>composer install</code></li>
+                        <li>إعداد قاعدة البيانات</li>
+                        <li>تشغيل خادم Laravel</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">فهمت</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Show demo alert on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const demoAlert = new bootstrap.Modal(document.getElementById('demoAlert'));
+            demoAlert.show();
+            
+            // Populate sample data
+            populateApplicationsTable();
+            populateCoursesGrid();
+        });
+
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
+            
+            // Remove active class from all menu items
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(section + '-section').style.display = 'block';
+            
+            // Add active class to clicked menu item
+            event.target.classList.add('active');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                alert('تم تسجيل الخروج بنجاح');
+            }
+        }
+
+        function populateApplicationsTable() {
+            const applications = [
+                {
+                    id: 'STU-2025001',
+                    name: 'أحمد محمد علي',
+                    email: 'ahmed@example.com',
+                    phone: '0551234567',
+                    course: 'تطوير المواقع بـ Laravel',
+                    status: 'registered',
+                    statusText: 'مسجل',
+                    waitingPosition: null,
+                    date: '2025/08/10'
+                },
+                {
+                    id: 'STU-2025002',
+                    name: 'فاطمة أحمد سالم',
+                    email: 'fatima@example.com',
+                    phone: '0559876543',
+                    course: 'تصميم UI/UX المتقدم',
+                    status: 'waiting',
+                    statusText: 'قائمة الانتظار',
+                    waitingPosition: 1,
+                    date: '2025/08/10'
+                },
+                {
+                    id: 'STU-2025003',
+                    name: 'محمد عبدالله حسن',
+                    email: 'mohammed@example.com',
+                    phone: '0554567890',
+                    course: 'التسويق عبر وسائل التواصل',
+                    status: 'registered',
+                    statusText: 'مسجل',
+                    waitingPosition: null,
+                    date: '2025/08/09'
+                },
+                {
+                    id: 'STU-2025004',
+                    name: 'نور الدين طارق',
+                    email: 'nour@example.com',
+                    phone: '0557890123',
+                    course: 'إدارة المشاريع الرقمية',
+                    status: 'rejected',
+                    statusText: 'مرفوض',
+                    waitingPosition: null,
+                    date: '2025/08/09'
+                },
+                {
+                    id: 'STU-2025005',
+                    name: 'سارة علي محمد',
+                    email: 'sara@example.com',
+                    phone: '0552345678',
+                    course: 'تصميم UI/UX المتقدم',
+                    status: 'waiting',
+                    statusText: 'قائمة الانتظار',
+                    waitingPosition: 2,
+                    date: '2025/08/08'
+                }
+            ];
+
+            const tableBody = document.getElementById('applicationsTable');
+            tableBody.innerHTML = applications.map(app => `
+                <tr data-status="${app.status}">
+                    <td><input type="checkbox" class="form-check-input"></td>
+                    <td><code>${app.id}</code></td>
+                    <td>
+                        <div>
+                            <strong>${app.name}</strong>
+                            <small class="d-block text-muted">${app.email}</small>
+                            <small class="d-block text-muted">${app.phone}</small>
+                        </div>
+                    </td>
+                    <td>${app.course}</td>
+                    <td>
+                        <span class="status-badge status-${app.status}">${app.statusText}</span>
+                    </td>
+                    <td>
+                        ${app.waitingPosition ? 
+                            `<span class="badge bg-warning">#${app.waitingPosition}</span>` : 
+                            '<span class="text-muted">-</span>'
+                        }
+                    </td>
+                    <td>${app.date}</td>
+                    <td>
+                        ${app.status === 'waiting' ? 
+                            '<button class="btn btn-sm btn-primary btn-action" onclick="promoteStudent()">ترقية</button>' : 
+                            '<button class="btn btn-sm btn-success btn-action" onclick="confirmStudent()">تأكيد</button>'
+                        }
+                        <button class="btn btn-sm btn-danger btn-action" onclick="rejectStudent()">رفض</button>
+                        <button class="btn btn-sm btn-info btn-action" onclick="viewDetails()">تفاصيل</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function populateCoursesGrid() {
+            const courses = [
+                {
+                    name: 'تطوير المواقع بـ Laravel',
+                    category: 'البرمجة وتطوير الويب',
+                    capacity: '15/20',
+                    startDate: '2025/08/15',
+                    time: '09:00',
+                    status: 'active'
+                },
+                {
+                    name: 'تصميم UI/UX المتقدم',
+                    category: 'التصميم الجرافيكي',
+                    capacity: '25/25',
+                    startDate: '2025/08/20',
+                    time: '14:00',
+                    status: 'full'
+                },
+                {
+                    name: 'التسويق عبر وسائل التواصل',
+                    category: 'التسويق الرقمي',
+                    capacity: '28/30',
+                    startDate: '2025/08/25',
+                    time: '10:00',
+                    status: 'almost-full'
+                },
+                {
+                    name: 'إدارة المشاريع الرقمية',
+                    category: 'إدارة المشاريع',
+                    capacity: '8/15',
+                    startDate: '2025/09/01',
+                    time: '16:00',
+                    status: 'active'
+                }
+            ];
+
+            const coursesGrid = document.getElementById('coursesGrid');
+            coursesGrid.innerHTML = courses.map(course => `
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title mb-0">${course.name}</h5>
+                                <span class="badge bg-${course.status === 'full' ? 'danger' : course.status === 'almost-full' ? 'warning' : 'success'}">
+                                    ${course.status === 'full' ? 'مكتملة' : course.status === 'almost-full' ? 'شبه مكتملة' : 'متاحة'}
+                                </span>
+                            </div>
+                            <p class="text-muted mb-3">${course.category}</p>
+                            <div class="row text-sm mb-3">
+                                <div class="col-6">
+                                    <i class="bx bx-group text-primary me-1"></i>
+                                    <strong>السعة:</strong> ${course.capacity}
+                                </div>
+                                <div class="col-6">
+                                    <i class="bx bx-calendar text-primary me-1"></i>
+                                    <strong>البداية:</strong> ${course.startDate}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <i class="bx bx-time text-primary me-1"></i>
+                                <strong>التوقيت:</strong> ${course.time}
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary btn-sm">تعديل</button>
+                                <button class="btn btn-outline-info btn-sm">عرض المتقدمين</button>
+                                <button class="btn btn-outline-danger btn-sm">حذف</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterApplications(status) {
+            const rows = document.querySelectorAll('#applicationsTable tr');
+            rows.forEach(row => {
+                if (status === 'all' || row.dataset.status === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Demo functions
+        function promoteStudent() {
+            alert('تم ترقية الطالب من قائمة الانتظار إلى مسجل بنجاح!');
+        }
+
+        function confirmStudent() {
+            alert('تم تأكيد تسجيل الطالب بنجاح!');
+        }
+
+        function rejectStudent() {
+            if (confirm('هل تريد رفض هذا الطلب؟')) {
+                alert('تم رفض الطلب');
+            }
+        }
+
+        function viewDetails() {
+            alert('عرض تفاصيل الطالب والطلب');
+        }
+    </script>
+</body>
+</html>

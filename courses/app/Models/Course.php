@@ -2,126 +2,58 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Providers\FileDbConnection;
 
-class Course extends Model
+class Course
 {
-    use HasFactory;
-
     protected $fillable = [
-        'category_id',
-        'title',
-        'description',
-        'capacity_limit',
-        'start_time',
-        'end_time'
+        'title', 'description', 'category_id', 'max_students', 'price', 'duration'
     ];
 
-    protected $casts = [
-        'start_time' => 'datetime',
-        'end_time' => 'datetime'
-    ];
+    private static function getDb()
+    {
+        static $db = null;
+        if ($db === null) {
+            $db = new FileDbConnection();
+        }
+        return $db;
+    }
 
-    /**
-     * Get the category this course belongs to
-     */
+    public static function create($data)
+    {
+        return self::getDb()->insert('courses', $data);
+    }
+
+    public static function find($id)
+    {
+        $record = self::getDb()->find('courses', $id);
+        if ($record) {
+            $instance = new static();
+            foreach ($record as $key => $value) {
+                $instance->$key = $value;
+            }
+            return $instance;
+        }
+        return null;
+    }
+
+    public static function where($field, $value)
+    {
+        return self::getDb()->where('courses', $field, $value);
+    }
+
+    public static function all()
+    {
+        return self::getDb()->all('courses');
+    }
+
+    public static function count()
+    {
+        return count(self::getDb()->all('courses'));
+    }
+
     public function category()
     {
-        return $this->belongsTo(Category::class);
-    }
-
-    /**
-     * Get applications for this course
-     */
-    public function applications()
-    {
-        return $this->hasMany(Application::class, 'selected_courses');
-    }
-
-    /**
-     * Check if course has available spots
-     */
-    public function hasAvailableSpots()
-    {
-        // Count registered applications for this course
-        $registeredCount = Application::where('status', 'registered')
-            ->whereJsonContains('selected_courses', $this->id)
-            ->count();
-            
-        return $registeredCount < $this->capacity_limit;
-    }
-
-    /**
-     * Get available spots count
-     */
-    public function getAvailableSpotsAttribute()
-    {
-        $registeredCount = Application::where('status', 'registered')
-            ->whereJsonContains('selected_courses', $this->id)
-            ->count();
-            
-        return $this->capacity_limit - $registeredCount;
-    }
-
-    /**
-     * Get registered students count
-     */
-    public function getRegisteredStudentsCountAttribute()
-    {
-        return Application::where('status', 'registered')
-            ->whereJsonContains('selected_courses', (string)$this->id)
-            ->count();
-    }
-
-    /**
-     * Get waiting students count
-     */
-    public function getWaitingStudentsCountAttribute()
-    {
-        return Application::where('status', 'waiting')
-            ->whereJsonContains('selected_courses', (string)$this->id)
-            ->count();
-    }
-
-    /**
-     * Get total applications count (registered + waiting)
-     */
-    public function getTotalApplicationsCountAttribute()
-    {
-        return Application::whereIn('status', ['registered', 'waiting'])
-            ->whereJsonContains('selected_courses', (string)$this->id)
-            ->count();
-    }
-
-    /**
-     * Check if course is full (no available spots)
-     */
-    public function isFullAttribute()
-    {
-        return !$this->hasAvailableSpots();
-    }
-
-    /**
-     * Get course status based on capacity
-     */
-    public function getStatusAttribute()
-    {
-        if ($this->registered_students_count >= $this->capacity_limit) {
-            return 'full';
-        } elseif ($this->registered_students_count > ($this->capacity_limit * 0.8)) {
-            return 'almost_full';
-        } else {
-            return 'available';
-        }
-    }
-
-    /**
-     * Get capacity percentage
-     */
-    public function getCapacityPercentageAttribute()
-    {
-        if ($this->capacity_limit == 0) return 0;
-        return round(($this->registered_students_count / $this->capacity_limit) * 100, 1);
+        return Category::find($this->category_id ?? 0);
     }
 }
