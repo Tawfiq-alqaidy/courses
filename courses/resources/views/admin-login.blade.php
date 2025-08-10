@@ -9,7 +9,7 @@
         min-height: 100vh;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    
+
     .login-container {
         min-height: 100vh;
         display: flex;
@@ -17,7 +17,7 @@
         justify-content: center;
         padding: 2rem 0;
     }
-    
+
     .login-card {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
@@ -28,7 +28,7 @@
         width: 100%;
         margin: 0 1rem;
     }
-    
+
     .login-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
@@ -36,7 +36,7 @@
         text-align: center;
         position: relative;
     }
-    
+
     .login-header::before {
         content: '';
         position: absolute;
@@ -47,22 +47,22 @@
         background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
         opacity: 0.3;
     }
-    
+
     .login-icon {
         font-size: 4rem;
         margin-bottom: 1rem;
         position: relative;
         z-index: 1;
     }
-    
+
     .login-form {
         padding: 2.5rem;
     }
-    
+
     .form-floating {
         margin-bottom: 1.5rem;
     }
-    
+
     .form-control {
         border: 2px solid #e9ecef;
         border-radius: 10px;
@@ -71,19 +71,19 @@
         transition: all 0.3s ease;
         background-color: #f8f9fa;
     }
-    
+
     .form-control:focus {
         border-color: #667eea;
         box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         background-color: white;
     }
-    
+
     .form-label {
         color: #6c757d;
         font-weight: 600;
         padding: 0 0.5rem;
     }
-    
+
     .btn-login {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
@@ -96,47 +96,47 @@
         transition: all 0.3s ease;
         margin-top: 1rem;
     }
-    
+
     .btn-login:hover {
         transform: translateY(-2px);
         box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         color: white;
     }
-    
+
     .btn-login:active {
         transform: translateY(0);
     }
-    
+
     .alert {
         border-radius: 10px;
         border: none;
         margin-bottom: 1.5rem;
     }
-    
+
     .remember-me {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         margin: 1rem 0;
     }
-    
+
     .form-check-input {
         border-radius: 5px;
         border: 2px solid #667eea;
     }
-    
+
     .form-check-input:checked {
         background-color: #667eea;
         border-color: #667eea;
     }
-    
+
     .footer-text {
         text-align: center;
         margin-top: 2rem;
         color: #6c757d;
         font-size: 0.9rem;
     }
-    
+
     .demo-credentials {
         background: rgba(102, 126, 234, 0.1);
         border-radius: 10px;
@@ -144,25 +144,25 @@
         margin-top: 1.5rem;
         border: 1px dashed #667eea;
     }
-    
+
     .demo-credentials h6 {
         color: #667eea;
         margin-bottom: 0.5rem;
     }
-    
+
     .demo-credentials small {
         color: #6c757d;
     }
-    
+
     @media (max-width: 576px) {
         .login-header {
             padding: 2rem 1.5rem 1.5rem;
         }
-        
+
         .login-form {
             padding: 2rem 1.5rem;
         }
-        
+
         .login-icon {
             font-size: 3rem;
         }
@@ -208,13 +208,13 @@
 
                 <!-- Email Field -->
                 <div class="form-floating">
-                    <input type="email" 
-                           class="form-control @error('email') is-invalid @enderror" 
-                           id="email" 
-                           name="email" 
-                           value="{{ old('email') }}" 
+                    <input type="email"
+                           class="form-control @error('email') is-invalid @enderror"
+                           id="email"
+                           name="email"
+                           value="{{ old('email') }}"
                            placeholder="admin@example.com"
-                           required 
+                           required
                            autofocus>
                     <label for="email">
                         <i class="bx bx-envelope me-2"></i>البريد الإلكتروني
@@ -228,10 +228,10 @@
 
                 <!-- Password Field -->
                 <div class="form-floating">
-                    <input type="password" 
-                           class="form-control @error('password') is-invalid @enderror" 
-                           id="password" 
-                           name="password" 
+                    <input type="password"
+                           class="form-control @error('password') is-invalid @enderror"
+                           id="password"
+                           name="password"
                            placeholder="كلمة المرور"
                            required>
                     <label for="password">
@@ -246,10 +246,10 @@
 
                 <!-- Remember Me -->
                 <div class="remember-me">
-                    <input type="checkbox" 
-                           class="form-check-input" 
-                           id="remember" 
-                           name="remember" 
+                    <input type="checkbox"
+                           class="form-check-input"
+                           id="remember"
+                           name="remember"
                            {{ old('remember') ? 'checked' : '' }}>
                     <label class="form-check-label" for="remember">
                         تذكرني
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add loading state to submit button
     const form = document.querySelector('form');
     const submitBtn = document.querySelector('.btn-login');
-    
+
     form.addEventListener('submit', function() {
         submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin me-2"></i>جاري تسجيل الدخول...';
         submitBtn.disabled = true;
@@ -332,20 +332,20 @@ document.addEventListener('DOMContentLoaded', function() {
         demoButtons.forEach((row, index) => {
             row.style.cursor = 'pointer';
             row.style.transition = 'background-color 0.2s ease';
-            
+
             row.addEventListener('mouseenter', function() {
                 this.style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
                 this.style.borderRadius = '5px';
             });
-            
+
             row.addEventListener('mouseleave', function() {
                 this.style.backgroundColor = 'transparent';
             });
-            
+
             row.addEventListener('click', function() {
                 const emailField = document.getElementById('email');
                 const passwordField = document.getElementById('password');
-                
+
                 if (index === 0) {
                     emailField.value = 'admin@courses.com';
                     passwordField.value = 'password';
@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     emailField.value = 'admin@example.com';
                     passwordField.value = 'admin123';
                 }
-                
+
                 // Show feedback
                 this.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
                 setTimeout(() => {
@@ -365,4 +365,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
-@endsection
+

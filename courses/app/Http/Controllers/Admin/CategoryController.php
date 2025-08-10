@@ -8,16 +8,16 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware(function ($request, $next) {
-            if (!auth()->user()->isAdmin()) {
-                abort(403, 'غير مخول للوصول إلى لوحة الإدارة');
-            }
-            return $next($request);
-        });
-    }
+//    public function __construct()
+//    {
+//        $this->middleware('auth');
+//        $this->middleware(function ($request, $next) {
+//            if (!auth()->user()->isAdmin()) {
+//                abort(403, 'غير مخول للوصول إلى لوحة الإدارة');
+//            }
+//            return $next($request);
+//        });
+//    }
 
     /**
      * Display a listing of categories
@@ -25,11 +25,11 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::with('courses')->latest()->get();
-        
+
         // Get statistics
         $totalCourses = \App\Models\Course::count();
         $totalApplications = \App\Models\Application::count();
-        
+
         // Get category-specific stats
         $categoryStats = [];
         foreach ($categories as $category) {
@@ -38,7 +38,7 @@ class CategoryController extends Controller
                 'registered' => \App\Models\Application::where('category_id', $category->id)->where('status', 'registered')->count(),
             ];
         }
-        
+
         return view('admin.categories.index', compact('categories', 'totalCourses', 'totalApplications', 'categoryStats'));
     }
 

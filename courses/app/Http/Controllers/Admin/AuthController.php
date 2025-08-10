@@ -32,7 +32,7 @@ class AuthController extends Controller
 
         // Check if user exists and has admin role
         $user = User::where('email', $credentials['email'])->first();
-        
+
         if (!$user) {
             return back()->withErrors([
                 'email' => 'لم يتم العثور على مستخدم بهذا البريد الإلكتروني.',
@@ -56,10 +56,10 @@ class AuthController extends Controller
         // Attempt to log in
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            
+
             // Update last login time
-            $user->update(['last_login_at' => now()]);
-            
+
+
             return redirect()->intended(route('admin.dashboard'))
                 ->with('success', 'مرحبًا بك ' . $user->name);
         }
@@ -73,7 +73,7 @@ class AuthController extends Controller
     {
         // Get statistics
         $stats = $this->getDashboardStats();
-        
+
         // Get recent applications
         $recentApplications = \App\Models\Application::with(['category'])
             ->latest()

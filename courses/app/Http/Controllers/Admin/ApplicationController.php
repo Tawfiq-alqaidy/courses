@@ -11,16 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ApplicationController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware(function ($request, $next) {
-            if (!auth()->user()->isAdmin()) {
-                abort(403, 'غير مخول للوصول إلى لوحة الإدارة');
-            }
-            return $next($request);
-        });
-    }
 
     /**
      * Display a listing of applications
@@ -53,14 +43,14 @@ class ApplicationController extends Controller
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
-        
+
         if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
         $applications = $query->latest()->paginate(15);
         $categories = Category::all();
-        
+
         // Statistics
         $stats = [
             'total' => Application::count(),
@@ -79,7 +69,7 @@ class ApplicationController extends Controller
     {
         $application->load(['category']);
         $selectedCourses = $application->courses();
-        
+
         return view('admin.applications.show', compact('application', 'selectedCourses'));
     }
 
@@ -133,7 +123,7 @@ class ApplicationController extends Controller
     public function destroy(Application $application)
     {
         $application->delete();
-        
+
         return redirect()->route('admin.applications.index')
                         ->with('success', 'تم حذف الطلب بنجاح');
     }
@@ -144,7 +134,7 @@ class ApplicationController extends Controller
     public function register(Application $application)
     {
         $result = $application->register();
-        
+
         if ($result) {
             return redirect()->back()->with('success', 'تم تسجيل الطلب بنجاح');
         } else {
@@ -166,7 +156,7 @@ class ApplicationController extends Controller
      */
     public function unregister(Application $application)
     {
-        $application->markAsUnregistered();
+       $application->update(['status' => 'unregistered']);
         return redirect()->back()->with('success', 'تم إلغاء تسجيل الطلب وترقية طلاب قائمة الانتظار تلقائياً');
     }
 
@@ -183,7 +173,7 @@ class ApplicationController extends Controller
         }
 
         $result = $application->attemptRegistrationFromWaiting();
-        
+
         if ($result) {
             return response()->json([
                 'success' => true,
@@ -208,18 +198,18 @@ class ApplicationController extends Controller
         ]);
 
         $oldStatus = $application->status;
-        
+
         switch ($request->status) {
             case 'registered':
                 $result = $application->register();
                 $message = $result ? 'تم تسجيل الطلب بنجاح' : 'تم إضافة الطلب إلى قائمة الانتظار (الدورات ممتلئة)';
                 break;
-                
+
             case 'waiting':
                 $application->putOnWaitingList();
                 $message = 'تم وضع الطلب في قائمة الانتظار';
                 break;
-                
+
             case 'unregistered':
                 $application->markAsUnregistered();
                 $message = 'تم إلغاء تسجيل الطلب وترقية طلاب قائمة الانتظار تلقائياً';
@@ -254,7 +244,7 @@ class ApplicationController extends Controller
                         $successCount++;
                     }
                     break;
-                    
+
                 case 'waiting':
                     $application->putOnWaitingList();
                     $successCount++;

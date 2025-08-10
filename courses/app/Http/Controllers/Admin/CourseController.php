@@ -9,16 +9,16 @@ use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware(function ($request, $next) {
-            if (!auth()->user()->isAdmin()) {
-                abort(403);
-            }
-            return $next($request);
-        });
-    }
+//    public function __construct()
+//    {
+//        $this->middleware('auth');
+//        $this->middleware(function ($request, $next) {
+//            if (!auth()->user()->isAdmin()) {
+//                abort(403);
+//            }
+//            return $next($request);
+//        });
+//    }
 
     /**
      * Display a listing of courses
@@ -111,7 +111,7 @@ class CourseController extends Controller
     public function show(Course $course)
     {
         $course->load(['category']);
-        
+
         // Get applications for this course
         $applications = \App\Models\Application::whereJsonContains('selected_courses', $course->id)
                                              ->with('category')
@@ -165,7 +165,7 @@ class CourseController extends Controller
     {
         // Check if course has applications
         $applicationsCount = \App\Models\Application::whereJsonContains('selected_courses', $course->id)->count();
-        
+
         if ($applicationsCount > 0) {
             return redirect()->back()->with('error', 'لا يمكن حذف الدورة لوجود طلبات مرتبطة بها');
         }

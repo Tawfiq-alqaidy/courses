@@ -10,16 +10,6 @@ use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware(function ($request, $next) {
-            if (!auth()->user()->isAdmin()) {
-                abort(403);
-            }
-            return $next($request);
-        });
-    }
 
     /**
      * Display a listing of enrollments
@@ -61,7 +51,7 @@ class EnrollmentController extends Controller
         $students = User::whereHas('role', function($query) {
             $query->where('name', 'student');
         })->get();
-        
+
         $courses = Course::where('status', 'published')->get();
 
         return view('admin.enrollments.create', compact('students', 'courses'));
@@ -112,7 +102,7 @@ class EnrollmentController extends Controller
         $students = User::whereHas('role', function($query) {
             $query->where('name', 'student');
         })->get();
-        
+
         $courses = Course::select('id', 'title')->get();
 
         return view('admin.enrollments.edit', compact('enrollment', 'students', 'courses'));

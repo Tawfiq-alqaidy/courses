@@ -11,16 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ApplicationController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware(function ($request, $next) {
-            if (!auth()->user()->isAdmin()) {
-                abort(403, 'غير مخول للوصول إلى لوحة الإدارة');
-            }
-            return $next($request);
-        });
-    }
+
 
     /**
      * Display a listing of applications
@@ -53,14 +44,14 @@ class ApplicationController extends Controller
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
-        
+
         if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
         $applications = $query->latest()->paginate(15);
         $categories = Category::all();
-        
+
         // Statistics
         $stats = [
             'total' => Application::count(),
@@ -79,7 +70,7 @@ class ApplicationController extends Controller
     {
         $application->load(['category']);
         $selectedCourses = $application->courses();
-        
+
         return view('admin.applications.show', compact('application', 'selectedCourses'));
     }
 
@@ -133,7 +124,7 @@ class ApplicationController extends Controller
     public function destroy(Application $application)
     {
         $application->delete();
-        
+
         return redirect()->route('admin.applications.index')
                         ->with('success', 'تم حذف الطلب بنجاح');
     }

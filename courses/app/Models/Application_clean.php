@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Application extends Model
+class Application_clean extends Model
 {
     use HasFactory;
 
@@ -213,7 +213,7 @@ class Application extends Model
             if (empty($application->unique_student_code)) {
                 $application->unique_student_code = self::generateUniqueCode();
             }
-            
+
             // Auto-assign status based on course capacity when creating new application
             if (empty($application->status)) {
                 $application->status = $application->determineInitialStatus();

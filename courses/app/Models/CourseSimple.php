@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-class Course
+use Illuminate\Database\Eloquent\Model;
+
+class CourseSimple extends Model
 {
     protected $fillable = [
         'name', 'description', 'capacity', 'enrolled_count', 'category_id'

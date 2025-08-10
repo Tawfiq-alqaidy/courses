@@ -11,7 +11,7 @@
         margin-bottom: 2rem;
         border-radius: 15px;
     }
-    
+
     .filter-card {
         background: white;
         border-radius: 15px;
@@ -19,14 +19,14 @@
         box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         margin-bottom: 2rem;
     }
-    
+
     .applications-table {
         background: white;
         border-radius: 15px;
         overflow: hidden;
         box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
-    
+
     .table th {
         background: #f8f9fa;
         border: none;
@@ -34,54 +34,54 @@
         color: #495057;
         padding: 1rem;
     }
-    
+
     .table td {
         border: none;
         padding: 1rem;
         vertical-align: middle;
     }
-    
+
     .table tbody tr {
         border-bottom: 1px solid #f1f3f4;
         transition: all 0.2s ease;
     }
-    
+
     .table tbody tr:hover {
         background: #f8f9fa;
     }
-    
+
     .status-badge {
         padding: 0.375rem 0.75rem;
         border-radius: 20px;
         font-size: 0.75rem;
         font-weight: 600;
     }
-    
+
     .status-unregistered {
         background: #fff3cd;
         color: #856404;
         border: 1px solid #ffeaa7;
     }
-    
+
     .status-registered {
         background: #d4edda;
         color: #155724;
         border: 1px solid #c3e6cb;
     }
-    
+
     .status-waiting {
         background: #e2e3e5;
         color: #383d41;
         border: 1px solid #d6d8db;
     }
-    
+
     .action-buttons .btn {
         margin: 0 0.25rem;
         padding: 0.375rem 0.75rem;
         border-radius: 8px;
         font-size: 0.875rem;
     }
-    
+
     .bulk-actions {
         background: #f8f9fa;
         padding: 1rem;
@@ -89,17 +89,17 @@
         margin-bottom: 1rem;
         display: none;
     }
-    
+
     .bulk-actions.show {
         display: block;
     }
-    
+
     .student-info {
         display: flex;
         align-items: center;
         gap: 0.75rem;
     }
-    
+
     .student-avatar {
         width: 40px;
         height: 40px;
@@ -112,11 +112,11 @@
         font-weight: bold;
         font-size: 0.9rem;
     }
-    
+
     .courses-list {
         max-width: 200px;
     }
-    
+
     .course-tag {
         display: inline-block;
         background: #e9ecef;
@@ -126,47 +126,47 @@
         font-size: 0.75rem;
         margin: 0.125rem;
     }
-    
+
     .stats-row {
         background: rgba(255,255,255,0.1);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
     }
-    
+
     .stat-item {
         text-align: center;
         color: white;
     }
-    
+
     .stat-item .number {
         font-size: 1.5rem;
         font-weight: bold;
         display: block;
     }
-    
+
     .stat-item .label {
         font-size: 0.875rem;
         opacity: 0.9;
     }
-    
+
     @media (max-width: 768px) {
         .table-responsive {
             font-size: 0.875rem;
         }
-        
+
         .student-info {
             flex-direction: column;
             gap: 0.5rem;
             text-align: center;
         }
-        
+
         .action-buttons .btn {
             margin-bottom: 0.25rem;
             font-size: 0.75rem;
             padding: 0.25rem 0.5rem;
         }
-        
+
         .courses-list {
             max-width: 150px;
         }
@@ -229,10 +229,10 @@
             <form method="GET" action="{{ route('admin.applications.index') }}" class="row align-items-end g-3">
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">البحث</label>
-                    <input type="text" 
-                           name="search" 
-                           class="form-control" 
-                           placeholder="اسم الطالب أو البريد..." 
+                    <input type="text"
+                           name="search"
+                           class="form-control"
+                           placeholder="اسم الطالب أو البريد..."
                            value="{{ request('search') }}">
                 </div>
                 <div class="col-md-2">
@@ -240,7 +240,7 @@
                     <select name="category" class="form-select">
                         <option value="">جميع التخصصات</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}" 
+                            <option value="{{ $category->id }}"
                                     {{ request('category') == $category->id ? 'selected' : '' }}>
                                 {{ $category->name }}
                             </option>
@@ -324,7 +324,7 @@
                         @forelse($applications as $application)
                         <tr>
                             <td>
-                                <input type="checkbox" class="form-check-input application-checkbox" 
+                                <input type="checkbox" class="form-check-input application-checkbox"
                                        value="{{ $application->id }}">
                             </td>
                             <td>
@@ -379,44 +379,44 @@
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="{{ route('admin.applications.show', $application) }}" 
-                                       class="btn btn-outline-primary btn-sm" 
+                                    <a href="{{ route('admin.applications.show', $application) }}"
+                                       class="btn btn-outline-primary btn-sm"
                                        title="عرض التفاصيل">
                                         <i class="bx bx-show"></i>
                                     </a>
-                                    
+
                                     @if($application->status === 'unregistered')
-                                        <button class="btn btn-outline-success btn-sm" 
-                                                onclick="updateStatus({{ $application->id }}, 'registered')" 
+                                        <button class="btn btn-outline-success btn-sm"
+                                                onclick="updateStatus({{ $application->id }}, 'register')"
                                                 title="قبول الطلب">
                                             <i class="bx bx-check"></i>
                                         </button>
-                                        <button class="btn btn-outline-warning btn-sm" 
-                                                onclick="updateStatus({{ $application->id }}, 'waiting')" 
+                                        <button class="btn btn-outline-warning btn-sm"
+                                                onclick="updateStatus({{ $application->id }}, 'waiting')"
                                                 title="قائمة انتظار">
                                             <i class="bx bx-time"></i>
                                         </button>
                                     @elseif($application->status === 'waiting')
-                                        <button class="btn btn-outline-info btn-sm" 
-                                                onclick="promoteFromWaiting({{ $application->id }})" 
+                                        <button class="btn btn-outline-info btn-sm"
+                                                onclick="promoteFromWaiting({{ $application->id }})"
                                                 title="ترقية من قائمة الانتظار">
                                             <i class="bx bx-up-arrow-alt"></i>
                                         </button>
-                                        <button class="btn btn-outline-secondary btn-sm" 
-                                                onclick="updateStatus({{ $application->id }}, 'unregistered')" 
+                                        <button class="btn btn-outline-secondary btn-sm"
+                                                onclick="updateStatus({{ $application->id }}, 'unregister')"
                                                 title="إعادة للمراجعة">
                                             <i class="bx bx-undo"></i>
                                         </button>
                                     @elseif($application->status === 'registered')
-                                        <button class="btn btn-outline-secondary btn-sm" 
-                                                onclick="updateStatus({{ $application->id }}, 'unregistered')" 
+                                        <button class="btn btn-outline-secondary btn-sm"
+                                                onclick="updateStatus({{ $application->id }}, 'unregister')"
                                                 title="إلغاء التسجيل (سيرقى طلاب الانتظار تلقائياً)">
                                             <i class="bx bx-undo"></i>
                                         </button>
                                     @endif
-                                    
-                                    <button class="btn btn-outline-danger btn-sm" 
-                                            onclick="deleteApplication({{ $application->id }})" 
+
+                                    <button class="btn btn-outline-danger btn-sm"
+                                            onclick="deleteApplication({{ $application->id }})"
                                             title="حذف الطلب">
                                         <i class="bx bx-trash"></i>
                                     </button>
@@ -489,9 +489,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateBulkActions() {
         const selectedCheckboxes = document.querySelectorAll('.application-checkbox:checked');
         const count = selectedCheckboxes.length;
-        
+
         selectedCountSpan.textContent = count;
-        
+
         if (count > 0) {
             bulkActionsDiv.classList.add('show');
         } else {
@@ -508,15 +508,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function updateStatus(applicationId, status) {
     const statusLabels = {
-        'registered': 'قبول',
+        'register': 'قبول',
         'waiting': 'نقل إلى قائمة الانتظار',
-        'unregistered': 'إعادة للمراجعة'
+        'unregister': 'إعادة للمراجعة'
     };
 
     showConfirmModal(
         `هل تريد ${statusLabels[status]} هذا الطلب؟`,
         () => {
-            fetch(`{{ route('admin.applications.index') }}/${applicationId}/status`, {
+            fetch(`/admin/applications/${applicationId}/${status}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -526,14 +526,10 @@ function updateStatus(applicationId, status) {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('حدث خطأ: ' + data.message);
-                }
+                location.reload();
             })
             .catch(error => {
-                alert('حدث خطأ في الاتصال');
+                location.reload();
                 console.error('Error:', error);
             });
         }
@@ -541,10 +537,11 @@ function updateStatus(applicationId, status) {
 }
 
 function promoteFromWaiting(applicationId) {
+    console.log(applicationId)
     showConfirmModal(
         'هل تريد ترقية هذا الطالب من قائمة الانتظار؟',
         () => {
-            fetch(`{{ route('admin.applications.index') }}/${applicationId}/promote`, {
+            fetch(`/admin/applications/${applicationId}/promote`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -553,15 +550,10 @@ function promoteFromWaiting(applicationId) {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    showAlert('success', data.message);
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    showAlert('error', data.message);
-                }
+                location.reload();
             })
             .catch(error => {
-                showAlert('error', 'حدث خطأ في الاتصال');
+                location.reload();
                 console.error('Error:', error);
             });
         }
@@ -613,14 +605,10 @@ function bulkAction(status) {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('حدث خطأ: ' + data.message);
-                }
+                location.reload();
             })
             .catch(error => {
-                alert('حدث خطأ في الاتصال');
+                location.reload();
                 console.error('Error:', error);
             });
         }
@@ -648,14 +636,10 @@ function bulkDelete() {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('حدث خطأ: ' + data.message);
-                }
+                location.reload();
             })
             .catch(error => {
-                alert('حدث خطأ في الاتصال');
+                location.reload();
                 console.error('Error:', error);
             });
         },
@@ -676,7 +660,7 @@ function showConfirmModal(message, onConfirm, buttonClass = 'btn-primary') {
 
     messageElement.textContent = message;
     confirmButton.className = `btn ${buttonClass}`;
-    
+
     confirmButton.onclick = () => {
         modal.hide();
         onConfirm();

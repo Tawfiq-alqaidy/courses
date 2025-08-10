@@ -16,7 +16,7 @@ class ApplicationController extends Controller
     {
         $categories = Category::all();
         $courses = Course::all();
-        
+
         return view('application-form', compact('categories', 'courses'));
     }
 
@@ -45,13 +45,13 @@ class ApplicationController extends Controller
 
         // Verify selected courses belong to the selected category
         $selectedCourses = Course::whereIn('id', $validated['selected_courses'])
-                                ->where('category_id', $validated['category_id'])
-                                ->pluck('id')
-                                ->toArray();
+            ->where('category_id', $validated['category_id'])
+            ->pluck('id')
+            ->toArray();
 
         if (count($selectedCourses) !== count($validated['selected_courses'])) {
             return back()->withErrors(['selected_courses' => 'الدورات المختارة لا تنتمي إلى الفئة المحددة'])
-                        ->withInput();
+                ->withInput();
         }
 
         // Create application with automatic status determination
@@ -72,10 +72,10 @@ class ApplicationController extends Controller
         }
 
         return redirect()->route('applications.success')
-                        ->with([
-                            'application_code' => $application->unique_student_code,
-                            'status_message' => $status_message
-                        ]);
+            ->with([
+                'application_code' => $application->unique_student_code,
+                'status_message' => $status_message
+            ]);
     }
 
     /**
@@ -84,7 +84,7 @@ class ApplicationController extends Controller
     public function success()
     {
         if (!session()->has('application_code')) {
-            return redirect()->route('applications.create');
+            return redirect()->route('applications.form');
         }
 
         return view('applications.success');
@@ -96,8 +96,8 @@ class ApplicationController extends Controller
     public function status($code)
     {
         $application = Application::where('unique_student_code', $code)
-                                 ->with(['category', 'courses'])
-                                 ->first();
+            ->with(['category'])
+            ->first();
 
         if (!$application) {
             abort(404, 'رمز الطالب غير موجود');

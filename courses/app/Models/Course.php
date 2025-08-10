@@ -3,57 +3,175 @@
 namespace App\Models;
 
 use App\Providers\FileDbConnection;
+use Illuminate\Database\Eloquent\Model;
 
-class Course
+class Course extends Model
 {
     protected $fillable = [
-        'title', 'description', 'category_id', 'max_students', 'price', 'duration'
+        'title',
+        'description',
+        'category_id',
+        'start_time',
+        'end_time',
+        'max_students',
+        'price',
+        'duration',
+        'status',
+        'image',
+        'instructor_id'
     ];
 
-    private static function getDb()
-    {
-        static $db = null;
-        if ($db === null) {
-            $db = new FileDbConnection();
-        }
-        return $db;
-    }
+    public $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+        'price' => 'decimal:2',
+        'status' => 'string'
+    ];
 
-    public static function create($data)
-    {
-        return self::getDb()->insert('courses', $data);
-    }
-
-    public static function find($id)
-    {
-        $record = self::getDb()->find('courses', $id);
-        if ($record) {
-            $instance = new static();
-            foreach ($record as $key => $value) {
-                $instance->$key = $value;
-            }
-            return $instance;
-        }
-        return null;
-    }
-
-    public static function where($field, $value)
-    {
-        return self::getDb()->where('courses', $field, $value);
-    }
-
-    public static function all()
-    {
-        return self::getDb()->all('courses');
-    }
-
-    public static function count()
-    {
-        return count(self::getDb()->all('courses'));
-    }
-
+    // العلاقات
     public function category()
     {
-        return Category::find($this->category_id ?? 0);
+        return $this->belongsTo(Category::class);
+    }
+
+    public function instructor()
+    {
+        return $this->belongsTo(User::class, 'instructor_id');
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
+    }
+
+    // الوظائف المساعدة
+    public function hasAvailableSpots()
+    {
+        $enrolled = $this->enrollments()->count();
+        return $enrolled < $this->max_students;
+    }
+
+    public function getAvailableSpotsCount()
+    {
+        $enrolled = $this->enrollments()->count();
+        return max(0, $this->max_students - $enrolled);
+    }
+
+    public function isFull()
+    {
+        return !$this->hasAvailableSpots();
+    }
+
+    public function isActive()
+    {
+        return $this->status === 'active';
+    }
+
+    public function isUpcoming()
+    {
+        return $this->start_time && $this->start_time->isFuture();
+    }
+
+    public function isOngoing()
+    {
+        $now = now();
+        return $this->start_time && $this->end_time &&
+            $this->start_time->lte($now) && $this->end_time->gte($now);
+    }
+
+    public function isCompleted()
+    {
+        return $this->end_time && $this->end_time->isPast();
+    }
+
+    public function getDurationInHours()
+    {
+        if ($this->duration) {
+            return $this->duration;
+        }
+
+        if ($this->start_time && $this->end_time) {
+            return $this->start_time->diffInHours($this->end_time);
+        }
+
+        return 0;
+    }
+
+    public function getFormattedPrice()
+    {
+        return '$' . number_format($this->price, 2);
+    }
+
+    public function getEnrollmentPercentage()
+    {
+        if ($this->max_students <= 0) {
+            return 0;
+        }
+
+        $enrolled = $this->enrollments()->count();
+        return round(($enrolled / $this->max_students) * 100, 1);
+    }
+
+    // Scopes للاستعلامات
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopeUpcoming($query)
+    {
+        return $query->where('start_time', '>', now());
+    }
+
+    public function scopeOngoing($query)
+    {
+        $now = now();
+        return $query->where('start_time', '<=', $now)
+            ->where('end_time', '>=', $now);
+    }
+
+    public function scopeByCategory($query, $categoryId)
+    {
+        return $query->where('category_id', $categoryId);
+    }
+
+    public function scopeByInstructor($query, $instructorId)
+    {
+        return $query->where('instructor_id', $instructorId);
+    }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('status', 'active')
+            ->whereRaw('(SELECT COUNT(*) FROM enrollments WHERE enrollments.course_id = courses.id) < max_students');
+    }
+
+    // Accessors
+    public function getStatusBadgeAttribute()
+    {
+        $statuses = [
+            'active' => 'success',
+            'inactive' => 'secondary',
+            'draft' => 'warning',
+            'archived' => 'danger'
+        ];
+
+        $color = $statuses[$this->status] ?? 'secondary';
+        return "<span class='badge bg-{$color}'>{$this->status}</span>";
+    }
+
+    public function getIsEnrollmentOpenAttribute()
+    {
+        return $this->isActive() && $this->hasAvailableSpots() && $this->isUpcoming();
     }
 }

@@ -10,16 +10,7 @@ use App\Models\Category;
 
 class DashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware(function ($request, $next) {
-            if (!auth()->user()->isAdmin()) {
-                abort(403, 'غير مخول للوصول إلى لوحة الإدارة');
-            }
-            return $next($request);
-        });
-    }
+
 
     /**
      * Show admin dashboard
