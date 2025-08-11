@@ -57,18 +57,25 @@ class Course extends Model
     // الوظائف المساعدة
     public function hasAvailableSpots()
     {
-        $registeredCount = \App\Models\Application::where('status', 'registered')
-            ->whereJsonContains('selected_courses', (string)$this->id)
+        $enrolledCount = $this->enrollments()
+            ->whereIn('status', ['approved', 'completed'])
             ->count();
-        return $registeredCount < $this->capacity_limit;
+        return $enrolledCount < $this->capacity_limit;
     }
 
     public function getAvailableSpotsCount()
     {
-        $registeredCount = \App\Models\Application::where('status', 'registered')
-            ->whereJsonContains('selected_courses', (string)$this->id)
+        $enrolledCount = $this->enrollments()
+            ->whereIn('status', ['approved', 'completed'])
             ->count();
-        return max(0, $this->capacity_limit - $registeredCount);
+        return max(0, $this->capacity_limit - $enrolledCount);
+    }
+
+    public function getCurrentEnrolledCount()
+    {
+        return $this->enrollments()
+            ->whereIn('status', ['approved', 'completed'])
+            ->count();
     }
 
     public function isFull()
@@ -122,7 +129,7 @@ class Course extends Model
             return 0;
         }
 
-        $enrolled = $this->enrollments()->count();
+        $enrolled = $this->getCurrentEnrolledCount();
         return round(($enrolled / $this->capacity_limit) * 100, 1);
     }
 
@@ -157,7 +164,7 @@ class Course extends Model
     public function scopeAvailable($query)
     {
         return $query->where('status', 'active')
-            ->whereRaw('(SELECT COUNT(*) FROM enrollments WHERE enrollments.course_id = courses.id) < capacity_limit');
+            ->whereRaw('(SELECT COUNT(*) FROM enrollments WHERE enrollments.course_id = courses.id AND enrollments.status IN ("approved", "completed")) < capacity_limit');
     }
 
     // Accessors

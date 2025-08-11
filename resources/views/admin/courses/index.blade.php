@@ -11,14 +11,14 @@
         margin-bottom: 2rem;
         border-radius: 15px;
     }
-    
+
     .courses-table {
         background: white;
         border-radius: 15px;
         overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     }
-    
+
     .table th {
         background: #f8f9fa;
         border: none;
@@ -26,27 +26,27 @@
         color: #495057;
         padding: 1rem;
     }
-    
+
     .table td {
         border: none;
         padding: 1rem;
         vertical-align: middle;
     }
-    
+
     .table tbody tr {
         border-bottom: 1px solid #f1f3f4;
         transition: all 0.2s ease;
     }
-    
+
     .table tbody tr:hover {
         background: #f8f9fa;
     }
-    
+
     .course-title {
         font-weight: 600;
         color: #495057;
     }
-    
+
     .course-description {
         color: #6c757d;
         font-size: 0.9rem;
@@ -54,7 +54,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    
+
     .capacity-badge {
         background: #e9ecef;
         color: #495057;
@@ -63,69 +63,69 @@
         font-size: 0.8rem;
         font-weight: 600;
     }
-    
+
     .capacity-full {
         background: #f8d7da;
         color: #721c24;
     }
-    
+
     .capacity-low {
         background: #fff3cd;
         color: #856404;
     }
-    
+
     .time-info {
         font-size: 0.85rem;
         color: #6c757d;
     }
-    
+
     .action-buttons .btn {
         margin: 0 0.25rem;
         padding: 0.375rem 0.75rem;
         border-radius: 8px;
         font-size: 0.875rem;
     }
-    
+
     .filter-card {
         background: white;
         border-radius: 15px;
         padding: 1.5rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
     }
-    
+
     .stats-row {
-        background: rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
     }
-    
+
     .stat-item {
         text-align: center;
         color: white;
     }
-    
+
     .stat-item .number {
         font-size: 1.5rem;
         font-weight: bold;
         display: block;
     }
-    
+
     .stat-item .label {
         font-size: 0.875rem;
         opacity: 0.9;
     }
-    
+
     @media (max-width: 768px) {
         .table-responsive {
             font-size: 0.875rem;
         }
-        
+
         .course-description {
             max-width: 150px;
         }
-        
+
         .action-buttons .btn {
             margin-bottom: 0.25rem;
             font-size: 0.75rem;
@@ -178,11 +178,11 @@
 
     <div class="container">
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bx bx-check-circle me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bx bx-check-circle me-2"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
         @endif
 
         <!-- Add Course Button -->
@@ -198,21 +198,21 @@
             <form method="GET" action="{{ route('admin.courses.index') }}" class="row align-items-end g-3">
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">البحث</label>
-                    <input type="text" 
-                           name="search" 
-                           class="form-control" 
-                           placeholder="عنوان الدورة..." 
-                           value="{{ request('search') }}">
+                    <input type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="عنوان الدورة..."
+                        value="{{ request('search') }}">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">التخصص</label>
                     <select name="category" class="form-select">
                         <option value="">جميع التخصصات</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}" 
-                                    {{ request('category') == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
+                        <option value="{{ $category->id }}"
+                            {{ request('category') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -264,8 +264,8 @@
                     <tbody>
                         @forelse($courses as $course)
                         @php
-                            $registeredCount = $course->registered_applications_count ?? 0;
-                            $capacityPercentage = $course->capacity_limit > 0 ? ($registeredCount / $course->capacity_limit) * 100 : 0;
+                        $enrolledCount = $course->current_enrolled_count ?? 0;
+                        $capacityPercentage = $course->capacity_limit > 0 ? ($enrolledCount / $course->capacity_limit) * 100 : 0;
                         @endphp
                         <tr>
                             <td>
@@ -287,59 +287,59 @@
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <span class="me-2">{{ $registeredCount }}</span>
+                                    <span class="me-2">{{ $enrolledCount }}</span>
                                     <div class="progress" style="width: 60px; height: 6px;">
                                         <div class="progress-bar 
                                             @if($capacityPercentage >= 100) bg-danger
                                             @elseif($capacityPercentage >= 80) bg-warning
                                             @else bg-success
-                                            @endif" 
-                                             style="width: {{ min($capacityPercentage, 100) }}%"></div>
+                                            @endif"
+                                            style="width: {{ min($capacityPercentage, 100) }}%"></div>
                                     </div>
                                 </div>
                             </td>
                             <td>
                                 <div class="time-info">
                                     @if($course->start_time)
-                                        <div><i class="bx bx-time me-1"></i>{{ \Carbon\Carbon::parse($course->start_time)->format('Y/m/d') }}</div>
-                                        <div><small class="text-muted">{{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }}</small></div>
+                                    <div><i class="bx bx-time me-1"></i>{{ \Carbon\Carbon::parse($course->start_time)->format('Y/m/d') }}</div>
+                                    <div><small class="text-muted">{{ \Carbon\Carbon::parse($course->start_time)->format('H:i') }}</small></div>
                                     @else
-                                        <span class="text-muted">غير محدد</span>
+                                    <span class="text-muted">غير محدد</span>
                                     @endif
                                 </div>
                             </td>
                             <td>
                                 @if(!$course->start_time)
-                                    <span class="badge bg-secondary">غير محدد</span>
+                                <span class="badge bg-secondary">غير محدد</span>
                                 @elseif($course->start_time > now())
-                                    <span class="badge bg-info">قادمة</span>
+                                <span class="badge bg-info">قادمة</span>
                                 @elseif($course->end_time && $course->end_time < now())
                                     <span class="badge bg-dark">منتهية</span>
-                                @else
+                                    @else
                                     <span class="badge bg-success">جارية</span>
-                                @endif
+                                    @endif
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="{{ route('admin.courses.show', $course) }}" 
-                                       class="btn btn-outline-primary btn-sm" 
-                                       title="عرض التفاصيل">
+                                    <a href="{{ route('admin.courses.show', $course) }}"
+                                        class="btn btn-outline-primary btn-sm"
+                                        title="عرض التفاصيل">
                                         <i class="bx bx-show"></i>
                                     </a>
-                                    <a href="{{ route('admin.courses.edit', $course) }}" 
-                                       class="btn btn-outline-warning btn-sm" 
-                                       title="تعديل">
+                                    <a href="{{ route('admin.courses.edit', $course) }}"
+                                        class="btn btn-outline-warning btn-sm"
+                                        title="تعديل">
                                         <i class="bx bx-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.courses.destroy', $course) }}" 
-                                          method="POST" 
-                                          class="d-inline"
-                                          onsubmit="return confirm('هل أنت متأكد من حذف هذه الدورة؟ سيتم حذف جميع الطلبات المرتبطة بها.')">
+                                    <form action="{{ route('admin.courses.destroy', $course) }}"
+                                        method="POST"
+                                        class="d-inline"
+                                        onsubmit="return confirm('هل أنت متأكد من حذف هذه الدورة؟ سيتم حذف جميع الطلبات المرتبطة بها.')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
-                                                class="btn btn-outline-danger btn-sm" 
-                                                title="حذف">
+                                        <button type="submit"
+                                            class="btn btn-outline-danger btn-sm"
+                                            title="حذف">
                                             <i class="bx bx-trash"></i>
                                         </button>
                                     </form>
@@ -363,9 +363,9 @@
             </div>
 
             @if($courses->hasPages())
-                <div class="p-4 border-top">
-                    {{ $courses->appends(request()->query())->links() }}
-                </div>
+            <div class="p-4 border-top">
+                {{ $courses->appends(request()->query())->links() }}
+            </div>
             @endif
         </div>
     </div>
@@ -374,26 +374,26 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-hide alerts after 5 seconds
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        setTimeout(() => {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        }, 5000);
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-hide alerts after 5 seconds
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        });
 
-    // Animate progress bars
-    const progressBars = document.querySelectorAll('.progress-bar');
-    progressBars.forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0%';
-        setTimeout(() => {
-            bar.style.transition = 'width 1s ease';
-            bar.style.width = width;
-        }, 100);
+        // Animate progress bars
+        const progressBars = document.querySelectorAll('.progress-bar');
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.transition = 'width 1s ease';
+                bar.style.width = width;
+            }, 100);
+        });
     });
-});
 </script>
 @endpush

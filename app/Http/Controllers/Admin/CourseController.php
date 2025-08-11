@@ -9,23 +9,23 @@ use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
-//    public function __construct()
-//    {
-//        $this->middleware('auth');
-//        $this->middleware(function ($request, $next) {
-//            if (!auth()->user()->isAdmin()) {
-//                abort(403);
-//            }
-//            return $next($request);
-//        });
-//    }
+    //    public function __construct()
+    //    {
+    //        $this->middleware('auth');
+    //        $this->middleware(function ($request, $next) {
+    //            if (!auth()->user()->isAdmin()) {
+    //                abort(403);
+    //            }
+    //            return $next($request);
+    //        });
+    //    }
 
     /**
      * Display a listing of courses
      */
     public function index(Request $request)
     {
-        $query = Course::with(['category']);
+        $query = Course::with(['category', 'enrollments']);
 
         // Filter by search
         if ($request->filled('search')) {
@@ -46,10 +46,10 @@ class CourseController extends Controller
                     break;
                 case 'ongoing':
                     $query->where('start_time', '<=', $now)
-                          ->where(function($q) use ($now) {
-                              $q->whereNull('end_time')
+                        ->where(function ($q) use ($now) {
+                            $q->whereNull('end_time')
                                 ->orWhere('end_time', '>', $now);
-                          });
+                        });
                     break;
                 case 'ended':
                     $query->where('end_time', '<=', $now);
@@ -64,11 +64,11 @@ class CourseController extends Controller
         $courses = $query->paginate(15);
         $categories = Category::all();
 
-        // Load application counts for each course
+        // Load enrollment counts for each course using the proper Enrollment model
         foreach ($courses as $course) {
-            $course->registered_applications_count = \App\Models\Application::where('status', 'registered')
-                ->whereJsonContains('selected_courses', (string)$course->id)
-                ->count();
+            $course->current_enrolled_count = $course->getCurrentEnrolledCount();
+            $course->total_enrollments = $course->enrollments()->count();
+            $course->pending_enrollments = $course->enrollments()->where('status', 'pending')->count();
         }
 
         return view('admin.courses.index', compact('courses', 'categories'));
@@ -121,9 +121,9 @@ class CourseController extends Controller
 
         // Get applications for this course
         $applications = \App\Models\Application::whereJsonContains('selected_courses', $course->id)
-                                             ->with('category')
-                                             ->latest()
-                                             ->paginate(10);
+            ->with('category')
+            ->latest()
+            ->paginate(10);
 
         return view('admin.courses.show', compact('course', 'applications'));
     }

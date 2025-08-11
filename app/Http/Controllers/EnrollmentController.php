@@ -26,16 +26,11 @@ class EnrollmentController extends Controller
 
         // Check if already enrolled
         $existingEnrollment = Enrollment::where('student_id', Auth::id())
-                                       ->where('course_id', $course->id)
-                                       ->first();
+            ->where('course_id', $course->id)
+            ->first();
 
         if ($existingEnrollment) {
             return redirect()->back()->with('error', 'أنت مسجل بالفعل في هذه الدورة');
-        }
-
-        // Check if course is full
-        if ($course->isFull()) {
-            return redirect()->back()->with('error', 'الدورة مكتملة العدد');
         }
 
         // Check if enrollment is open
@@ -43,16 +38,26 @@ class EnrollmentController extends Controller
             return redirect()->back()->with('error', 'التسجيل غير متاح في هذه الدورة حاليا');
         }
 
+        // Determine enrollment status based on course capacity
+        $enrollmentStatus = 'pending';
+        $message = 'تم تسجيلك في قائمة الانتظار. سيتم إشعارك عند الموافقة';
+
+        // If course has available spots, approve immediately
+        if ($course->hasAvailableSpots()) {
+            $enrollmentStatus = 'approved';
+            $message = 'تم قبولك في الدورة بنجاح!';
+        }
+
         // Create enrollment
         Enrollment::create([
             'student_id' => Auth::id(),
             'course_id' => $course->id,
-            'status' => 'pending',
+            'status' => $enrollmentStatus,
             'enrollment_date' => now(),
             'amount_paid' => $course->price,
         ]);
 
-        return redirect()->back()->with('success', 'تم تسجيلك في الدورة بنجاح. في انتظار الموافقة');
+        return redirect()->back()->with('success', $message);
     }
 
     /**
@@ -61,9 +66,9 @@ class EnrollmentController extends Controller
     public function myEnrollments()
     {
         $enrollments = Enrollment::where('student_id', Auth::id())
-                                ->with(['course.category', 'course.instructor'])
-                                ->latest()
-                                ->paginate(10);
+            ->with(['course.category', 'course.instructor'])
+            ->latest()
+            ->paginate(10);
 
         return view('student.enrollments', compact('enrollments'));
     }
@@ -79,8 +84,10 @@ class EnrollmentController extends Controller
         }
 
         // Only allow cancellation if pending or approved and course hasn't started
-        if (!in_array($enrollment->status, ['pending', 'approved']) || 
-            $enrollment->course->start_date <= now()) {
+        if (
+            !in_array($enrollment->status, ['pending', 'approved']) ||
+            $enrollment->course->start_date <= now()
+        ) {
             return redirect()->back()->with('error', 'لا يمكن إلغاء التسجيل في هذا الوقت');
         }
 
