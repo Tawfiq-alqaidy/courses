@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 // Public Routes - Student Application
 Route::get('/', [ApplicationController::class, 'showForm'])->name('applications.form');
 Route::get('/apply', [ApplicationController::class, 'showForm'])->name('apply');
+Route::get('/application-form', [ApplicationController::class, 'showForm'])->name('applications.form.alternative');
 Route::get('/applications', [ApplicationController::class, 'showForm'])->name('applications.index');
 Route::post('/applications', [ApplicationController::class, 'store'])->name('applications.store');
 Route::get('/success', [ApplicationController::class, 'success'])->name('applications.success');

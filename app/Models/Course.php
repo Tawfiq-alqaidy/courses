@@ -13,7 +13,7 @@ class Course extends Model
         'category_id',
         'start_time',
         'end_time',
-        'max_students',
+        'capacity_limit',
         'price',
         'duration',
         'status',
@@ -57,14 +57,18 @@ class Course extends Model
     // الوظائف المساعدة
     public function hasAvailableSpots()
     {
-        $enrolled = $this->enrollments()->count();
-        return $enrolled < $this->max_students;
+        $registeredCount = \App\Models\Application::where('status', 'registered')
+            ->whereJsonContains('selected_courses', (string)$this->id)
+            ->count();
+        return $registeredCount < $this->capacity_limit;
     }
 
     public function getAvailableSpotsCount()
     {
-        $enrolled = $this->enrollments()->count();
-        return max(0, $this->max_students - $enrolled);
+        $registeredCount = \App\Models\Application::where('status', 'registered')
+            ->whereJsonContains('selected_courses', (string)$this->id)
+            ->count();
+        return max(0, $this->capacity_limit - $registeredCount);
     }
 
     public function isFull()
@@ -114,12 +118,12 @@ class Course extends Model
 
     public function getEnrollmentPercentage()
     {
-        if ($this->max_students <= 0) {
+        if ($this->capacity_limit <= 0) {
             return 0;
         }
 
         $enrolled = $this->enrollments()->count();
-        return round(($enrolled / $this->max_students) * 100, 1);
+        return round(($enrolled / $this->capacity_limit) * 100, 1);
     }
 
     // Scopes للاستعلامات
@@ -153,7 +157,7 @@ class Course extends Model
     public function scopeAvailable($query)
     {
         return $query->where('status', 'active')
-            ->whereRaw('(SELECT COUNT(*) FROM enrollments WHERE enrollments.course_id = courses.id) < max_students');
+            ->whereRaw('(SELECT COUNT(*) FROM enrollments WHERE enrollments.course_id = courses.id) < capacity_limit');
     }
 
     // Accessors

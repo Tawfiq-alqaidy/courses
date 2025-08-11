@@ -34,7 +34,7 @@
         {
             switch($this->status) {
                 case 'unregistered':
-                    return 'في الانتظار';
+                    return 'قيد المراجعة';
                 case 'registered':
                     return 'مقبول';
                 case 'waiting':
@@ -223,23 +223,8 @@
          */
         public function determineInitialStatus()
         {
-            if (empty($this->selected_courses) || !is_array($this->selected_courses)) {
-                return 'unregistered';
-            }
-
-            // Check if all selected courses have available spots
-            $allCoursesAvailable = true;
-            foreach ($this->selected_courses as $courseId) {
-                $course = Course::find($courseId);
-                if (!$course || !$course->hasAvailableSpots()) {
-                    $allCoursesAvailable = false;
-                    break;
-                }
-            }
-
-            // If all courses have spots available, register immediately
-            // If any course is full, add to waiting list
-            return $allCoursesAvailable ? 'registered' : 'waiting';
+            // Always set to unregistered for manual admin review
+            return 'unregistered';
         }
 
         /**
@@ -302,7 +287,7 @@
                 case 'waiting':
                     return 'في قائمة الانتظار';
                 case 'unregistered':
-                    return 'غير مسجل';
+                    return 'قيد المراجعة';
                 default:
                     return 'غير محدد';
             }

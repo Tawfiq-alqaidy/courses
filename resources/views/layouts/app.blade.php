@@ -35,6 +35,21 @@
     <!-- Page CSS -->
     @stack('styles')
 
+    <!-- Custom CSS for public pages -->
+    <style>
+        @if (in_array(request()->route()->getName(), ['applications.form', 'applications.store', 'applications.success', 'applications.status', 'apply', 'applications.index']))
+        .layout-wrapper .layout-container {
+            padding-left: 0 !important;
+        }
+        .layout-page {
+            margin-left: 0 !important;
+        }
+        .content-wrapper {
+            padding-top: 1.5rem !important;
+        }
+        @endif
+    </style>
+
     <!-- Helpers -->
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
 
@@ -46,7 +61,7 @@
         <div class="layout-container">
             <!-- Menu -->
 
-            @if (auth()->check())
+            @if (auth()->check() && !in_array(request()->route()->getName(), ['applications.form', 'applications.store', 'applications.success', 'applications.status', 'apply', 'applications.index']))
                 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                     <div class="app-brand demo">
                         <a href="index.html" class="app-brand-link">
@@ -207,7 +222,7 @@
             <!-- Layout container -->
             <div class="layout-page">
                 <!-- Navbar -->
-                @if (auth()->check())
+                @if (auth()->check() && !in_array(request()->route()->getName(), ['applications.form', 'applications.store', 'applications.success', 'applications.status', 'apply', 'applications.index']))
                     <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
                         id="layout-navbar">
                         <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">

@@ -54,6 +54,16 @@ class ApplicationController extends Controller
                 ->withInput();
         }
 
+        // Check for time conflicts between selected courses
+        $courses = Course::whereIn('id', $selectedCourses)->get();
+        $conflictingCourses = $this->checkTimeConflicts($courses);
+        
+        if (!empty($conflictingCourses)) {
+            $conflictMessage = 'يوجد تعارض في المواعيد بين الدورات التالية: ' . implode(' و ', $conflictingCourses);
+            return back()->withErrors(['selected_courses' => $conflictMessage])
+                ->withInput();
+        }
+
         // Create application with automatic status determination
         $application = Application::create([
             'student_name' => $validated['student_name'],
@@ -64,12 +74,8 @@ class ApplicationController extends Controller
             // Status will be automatically determined in the model
         ]);
 
-        // Provide appropriate feedback based on the assigned status
-        if ($application->status === 'registered') {
-            $status_message = 'تم تسجيلك بنجاح في الدورات المختارة';
-        } else {
-            $status_message = 'تم وضعك في قائمة الانتظار للدورات المكتملة العدد. سيتم تسجيلك تلقائياً عند توفر أماكن';
-        }
+        // Provide feedback for pending application
+        $status_message = 'تم استلام طلبك بنجاح. سيتم مراجعة طلبك من قبل الإدارة وسيتم التواصل معك قريباً.';
 
         return redirect()->route('applications.success')
             ->with([
@@ -104,5 +110,57 @@ class ApplicationController extends Controller
         }
 
         return view('applications.status', compact('application'));
+    }
+
+    /**
+     * Check for time conflicts between selected courses
+     */
+    private function checkTimeConflicts($courses)
+    {
+        $conflictingCourses = [];
+        $coursesArray = $courses->toArray();
+        
+        for ($i = 0; $i < count($coursesArray); $i++) {
+            for ($j = $i + 1; $j < count($coursesArray); $j++) {
+                $course1 = $coursesArray[$i];
+                $course2 = $coursesArray[$j];
+                
+                // Skip if either course doesn't have start/end times
+                if (!$course1['start_time'] || !$course1['end_time'] || 
+                    !$course2['start_time'] || !$course2['end_time']) {
+                    continue;
+                }
+                
+                $start1 = \Carbon\Carbon::parse($course1['start_time']);
+                $end1 = \Carbon\Carbon::parse($course1['end_time']);
+                $start2 = \Carbon\Carbon::parse($course2['start_time']);
+                $end2 = \Carbon\Carbon::parse($course2['end_time']);
+                
+                // Check if courses overlap in time
+                if ($this->timesOverlap($start1, $end1, $start2, $end2)) {
+                    $conflictKey = $course1['title'] . ' - ' . $course2['title'];
+                    if (!in_array($conflictKey, $conflictingCourses)) {
+                        $conflictingCourses[] = $conflictKey;
+                    }
+                }
+            }
+        }
+        
+        return $conflictingCourses;
+    }
+
+    /**
+     * Check if two time periods overlap
+     */
+    private function timesOverlap($start1, $end1, $start2, $end2)
+    {
+        // Check if the dates are the same first
+        if (!$start1->isSameDay($start2)) {
+            return false;
+        }
+        
+        // Check if time periods overlap on the same day
+        // Two time periods overlap if: start1 < end2 AND start2 < end1
+        return $start1->lt($end2) && $start2->lt($end1);
     }
 }

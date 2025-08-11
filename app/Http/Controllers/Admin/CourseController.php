@@ -64,6 +64,13 @@ class CourseController extends Controller
         $courses = $query->paginate(15);
         $categories = Category::all();
 
+        // Load application counts for each course
+        foreach ($courses as $course) {
+            $course->registered_applications_count = \App\Models\Application::where('status', 'registered')
+                ->whereJsonContains('selected_courses', (string)$course->id)
+                ->count();
+        }
+
         return view('admin.courses.index', compact('courses', 'categories'));
     }
 

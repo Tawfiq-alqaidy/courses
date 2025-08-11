@@ -264,9 +264,7 @@
                     <tbody>
                         @forelse($courses as $course)
                         @php
-                            $registeredCount = \App\Models\Application::where('status', 'registered')
-                                ->whereJsonContains('selected_courses', (string)$course->id)
-                                ->count();
+                            $registeredCount = $course->registered_applications_count ?? 0;
                             $capacityPercentage = $course->capacity_limit > 0 ? ($registeredCount / $course->capacity_limit) * 100 : 0;
                         @endphp
                         <tr>

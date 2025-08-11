@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'نموذج التقديم على الدورات')
+@section('title', 'منظومة التسجيل في الموسم الجامعي')
 
 @push('styles')
     <style>
         .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #112eb0ff 0%, #1c0bb3ff 100%);
             color: white;
             padding: 4rem 0;
             text-align: center;
@@ -73,7 +73,7 @@
             border-radius: 20px;
             padding: 2.5rem;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
             border: 1px solid #e9ecef;
         }
 
@@ -231,7 +231,7 @@
         <!-- Hero Section -->
         <div class="hero-section">
             <div class="hero-content">
-                <h1 class="display-4 fw-bold mb-3">التقديم على الدورات التدريبية</h1>
+                <h1 class="display-4 fw-bold mb-3">اتحاد طلبة جامعة طرابلس</h1>
                 <p class="lead mb-4">انضم إلينا وطور مهاراتك مع أفضل الدورات التدريبية</p>
                 <div class="d-inline-flex align-items-center gap-3">
                     <div class="d-flex align-items-center">
