@@ -185,22 +185,22 @@
         <!-- Login Form -->
         <div class="login-form">
             @if ($errors->any())
-                <div class="alert alert-danger">
-                    <i class="bx bx-error-circle me-2"></i>
-                    <strong>خطأ في تسجيل الدخول!</strong>
-                    <ul class="mb-0 mt-2">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+            <div class="alert alert-danger">
+                <i class="bx bx-error-circle me-2"></i>
+                <strong>خطأ في تسجيل الدخول!</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
             @endif
 
             @if (session('status'))
-                <div class="alert alert-success">
-                    <i class="bx bx-check-circle me-2"></i>
-                    {{ session('status') }}
-                </div>
+            <div class="alert alert-success">
+                <i class="bx bx-check-circle me-2"></i>
+                {{ session('status') }}
+            </div>
             @endif
 
             <form method="POST" action="{{ route('admin.login') }}">
@@ -209,43 +209,43 @@
                 <!-- Email Field -->
                 <div class="form-floating">
                     <input type="email"
-                           class="form-control @error('email') is-invalid @enderror"
-                           id="email"
-                           name="email"
-                           value="{{ old('email') }}"
-                           placeholder="admin@example.com"
-                           required
-                           autofocus>
+                        class="form-control @error('email') is-invalid @enderror"
+                        id="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        placeholder="admin@example.com"
+                        required
+                        autofocus>
                     <label for="email">
                         <i class="bx bx-envelope me-2"></i>البريد الإلكتروني
                     </label>
                     @error('email')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
                     @enderror
                 </div>
 
                 <!-- Password Field -->
                 <div class="form-floating">
                     <input type="password"
-                           class="form-control @error('password') is-invalid @enderror"
-                           id="password"
-                           name="password"
-                           placeholder="كلمة المرور"
-                           required>
+                        class="form-control @error('password') is-invalid @enderror"
+                        id="password"
+                        name="password"
+                        placeholder="كلمة المرور"
+                        required>
                     <label for="password">
                         <i class="bx bx-lock-alt me-2"></i>كلمة المرور
                     </label>
                     @error('password')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
                     @enderror
                 </div>
 
                 <!-- Remember Me -->
-                <div class="remember-me">
+                <!-- <div class="remember-me">
                     <input type="checkbox"
                            class="form-check-input"
                            id="remember"
@@ -254,7 +254,7 @@
                     <label class="form-check-label" for="remember">
                         تذكرني
                     </label>
-                </div>
+                </div> -->
 
                 <!-- Submit Button -->
                 <button type="submit" class="btn btn-login">
@@ -264,7 +264,7 @@
             </form>
 
             <!-- Demo Credentials -->
-            <div class="demo-credentials">
+            <!-- <div class="demo-credentials">
                 <h6><i class="bx bx-info-circle me-2"></i>بيانات تجريبية</h6>
                 <div class="row">
                     <div class="col-6">
@@ -283,7 +283,7 @@
                         <small><strong>كلمة المرور:</strong><br>admin123</small>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Footer -->
             <div class="footer-text">
@@ -299,70 +299,69 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto focus on email field
-    const emailField = document.getElementById('email');
-    if (emailField && !emailField.value) {
-        emailField.focus();
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto focus on email field
+        const emailField = document.getElementById('email');
+        if (emailField && !emailField.value) {
+            emailField.focus();
+        }
 
-    // Add loading state to submit button
-    const form = document.querySelector('form');
-    const submitBtn = document.querySelector('.btn-login');
+        // Add loading state to submit button
+        const form = document.querySelector('form');
+        const submitBtn = document.querySelector('.btn-login');
 
-    form.addEventListener('submit', function() {
-        submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin me-2"></i>جاري تسجيل الدخول...';
-        submitBtn.disabled = true;
-    });
-
-    // Auto-hide alerts after 5 seconds
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        setTimeout(() => {
-            alert.style.transition = 'opacity 0.5s ease';
-            alert.style.opacity = '0';
-            setTimeout(() => alert.remove(), 500);
-        }, 5000);
-    });
-
-    // Quick fill demo credentials
-    const demoCredentials = document.querySelector('.demo-credentials');
-    if (demoCredentials) {
-        const demoButtons = demoCredentials.querySelectorAll('.row');
-        demoButtons.forEach((row, index) => {
-            row.style.cursor = 'pointer';
-            row.style.transition = 'background-color 0.2s ease';
-
-            row.addEventListener('mouseenter', function() {
-                this.style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
-                this.style.borderRadius = '5px';
-            });
-
-            row.addEventListener('mouseleave', function() {
-                this.style.backgroundColor = 'transparent';
-            });
-
-            row.addEventListener('click', function() {
-                const emailField = document.getElementById('email');
-                const passwordField = document.getElementById('password');
-
-                if (index === 0) {
-                    emailField.value = 'admin@courses.com';
-                    passwordField.value = 'password';
-                } else {
-                    emailField.value = 'admin@example.com';
-                    passwordField.value = 'admin123';
-                }
-
-                // Show feedback
-                this.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
-                setTimeout(() => {
-                    this.style.backgroundColor = 'transparent';
-                }, 1000);
-            });
+        form.addEventListener('submit', function() {
+            submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin me-2"></i>جاري تسجيل الدخول...';
+            submitBtn.disabled = true;
         });
-    }
-});
+
+        // Auto-hide alerts after 5 seconds
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }, 5000);
+        });
+
+        // Quick fill demo credentials
+        const demoCredentials = document.querySelector('.demo-credentials');
+        if (demoCredentials) {
+            const demoButtons = demoCredentials.querySelectorAll('.row');
+            demoButtons.forEach((row, index) => {
+                row.style.cursor = 'pointer';
+                row.style.transition = 'background-color 0.2s ease';
+
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
+                    this.style.borderRadius = '5px';
+                });
+
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = 'transparent';
+                });
+
+                row.addEventListener('click', function() {
+                    const emailField = document.getElementById('email');
+                    const passwordField = document.getElementById('password');
+
+                    if (index === 0) {
+                        emailField.value = 'admin@courses.com';
+                        passwordField.value = 'password';
+                    } else {
+                        emailField.value = 'admin@example.com';
+                        passwordField.value = 'admin123';
+                    }
+
+                    // Show feedback
+                    this.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
+                    setTimeout(() => {
+                        this.style.backgroundColor = 'transparent';
+                    }, 1000);
+                });
+            });
+        }
+    });
 </script>
 @endpush
-
