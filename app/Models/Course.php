@@ -25,7 +25,8 @@ class Course extends Model
         'start_time' => 'datetime',
         'end_time' => 'datetime',
         'price' => 'decimal:2',
-        'status' => 'string'
+        'status' => 'string',
+        'capacity_limit' => 'integer',
     ];
 
     // العلاقات
@@ -73,9 +74,17 @@ class Course extends Model
 
     public function getCurrentEnrolledCount()
     {
-        return $this->enrollments()
-            ->whereIn('status', ['approved', 'completed'])
-            ->count();
+        // Count applications for this course that are registered
+        $count = 0;
+        $applications = Application::where('status', 'registered')->get();
+        
+        foreach ($applications as $application) {
+            if (in_array($this->id, $application->selected_courses ?? [])) {
+                $count++;
+            }
+        }
+        
+        return $count;
     }
 
     public function isFull()
@@ -125,12 +134,8 @@ class Course extends Model
 
     public function getEnrollmentPercentage()
     {
-        if ($this->capacity_limit <= 0) {
-            return 0;
-        }
-
-        $enrolled = $this->getCurrentEnrolledCount();
-        return round(($enrolled / $this->capacity_limit) * 100, 1);
+        // Always use the accessor for consistency
+        return $this->capacityPercentage;
     }
 
     // Scopes للاستعلامات
@@ -184,5 +189,14 @@ class Course extends Model
     public function getIsEnrollmentOpenAttribute()
     {
         return $this->isActive() && $this->hasAvailableSpots() && $this->isUpcoming();
+    }
+
+    public function getCapacityPercentageAttribute()
+    {
+        if ((int)$this->capacity_limit <= 0) {
+            return 0.0;
+        }
+        $enrolled = (int)$this->getCurrentEnrolledCount();
+        return round(($enrolled / (float)$this->capacity_limit) * 100, 1);
     }
 }

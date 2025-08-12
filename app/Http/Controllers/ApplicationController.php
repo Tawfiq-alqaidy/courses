@@ -50,6 +50,22 @@ class ApplicationController extends Controller
             'selected_courses.min' => 'يجب اختيار دورة واحدة على الأقل'
         ]);
 
+        // Create or find user
+        $user = \App\Models\User::firstOrCreate([
+            'email' => $validated['student_email']
+        ], [
+            'name' => $validated['student_name'],
+            'phone' => $validated['student_phone'] ?? null,
+            'role' => 'student',
+            'password' => bcrypt('temporary123') // User can change later
+        ]);
+
+        // Generate unique student code
+        $uniqueCode = 'ST' . date('Y') . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        while (Application::where('unique_student_code', $uniqueCode)->exists()) {
+            $uniqueCode = 'ST' . date('Y') . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        }
+
         // Verify selected courses belong to the selected category
         $selectedCourses = Course::whereIn('id', $validated['selected_courses'])
             ->where('category_id', $validated['category_id'])
@@ -73,11 +89,13 @@ class ApplicationController extends Controller
 
         // Create application with automatic status determination
         $application = Application::create([
+            'student_id' => $user->id,
             'student_name' => $validated['student_name'],
             'student_email' => $validated['student_email'],
             'student_phone' => $validated['student_phone'],
             'category_id' => $validated['category_id'],
             'selected_courses' => $selectedCourses,
+            'unique_student_code' => $uniqueCode,
             // Status will be automatically determined in the model
         ]);
 

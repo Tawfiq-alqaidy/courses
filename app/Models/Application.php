@@ -9,17 +9,16 @@
     {
         use HasFactory;
 
-        protected $fillable = [
-            'student_name',
-            'student_email',
-            'student_phone',
-            'category_id',
-            'selected_courses',
-            'unique_student_code',
-            'status'
-        ];
-
-        protected $casts = [
+    protected $fillable = [
+        'student_id',
+        'student_name',
+        'student_email',
+        'student_phone',
+        'category_id',
+        'selected_courses',
+        'unique_student_code',
+        'status'
+    ];        protected $casts = [
             'selected_courses' => 'array'
         ];
 
@@ -27,6 +26,12 @@
         public function category()
         {
             return $this->belongsTo(Category::class);
+        }
+
+        // Relationship with User (Student)
+        public function student()
+        {
+            return $this->belongsTo(User::class, 'student_id');
         }
 
         // Accessor for status label

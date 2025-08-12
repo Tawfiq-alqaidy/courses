@@ -264,8 +264,8 @@
                     <tbody>
                         @forelse($courses as $course)
                         @php
-                        $enrolledCount = $course->current_enrolled_count ?? 0;
-                        $capacityPercentage = $course->capacity_limit > 0 ? ($enrolledCount / $course->capacity_limit) * 100 : 0;
+                        $enrolledCount = $course->getCurrentEnrolledCount();
+                        $capacityPercentage = (float) $course->capacityPercentage;
                         @endphp
                         <tr>
                             <td>
@@ -294,7 +294,7 @@
                                             @elseif($capacityPercentage >= 80) bg-warning
                                             @else bg-success
                                             @endif"
-                                            style="width: {{ min($capacityPercentage, 100) }}%"></div>
+                                            style="width: {{ min((float)$capacityPercentage, 100) }}%"></div>
                                     </div>
                                 </div>
                             </td>
