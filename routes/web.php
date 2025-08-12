@@ -19,7 +19,6 @@ Route::get('/status/{code}', [ApplicationController::class, 'status'])->name('ap
 // Redirect old /application path to prevent errors
 Route::redirect('/application', '/applications');
 
-
 Route::get('/courses/{course:slug}', [\App\Http\Controllers\HomeController::class, 'showCourse'])->name('courses.show');
 
 // Admin Authentication Routes
@@ -41,6 +40,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Admin applications management
         Route::resource('applications', AdminApplicationController::class);
+        Route::get('applications-export', [AdminApplicationController::class, 'export'])->name('applications.export');
         Route::post('applications/{application}/register', [AdminApplicationController::class, 'register'])->name('applications.register');
         Route::post('applications/{application}/waiting', [AdminApplicationController::class, 'putOnWaitingList'])->name('applications.waiting');
         Route::post('applications/{application}/unregister', [AdminApplicationController::class, 'unregister'])->name('applications.unregister');
