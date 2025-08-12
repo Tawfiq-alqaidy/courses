@@ -29,6 +29,7 @@
         .hero-content {
             position: relative;
             z-index: 1;
+            color: white;
         }
 
         .course-card {
@@ -53,6 +54,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            color: black;
         }
 
         .category-filter:hover {
@@ -208,10 +210,11 @@
         }
 
         .requirements-card {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            background: linear-gradient(135deg, #667eea 0%, #6bbcffff 100%);
             border-radius: 15px;
             padding: 1.5rem;
             margin-bottom: 2rem;
+            color: white;
         }
 
         @media (max-width: 768px) {
@@ -231,7 +234,7 @@
         <!-- Hero Section -->
         <div class="hero-section">
             <div class="hero-content">
-                <h1 class="display-4 fw-bold mb-3">اتحاد طلبة جامعة طرابلس</h1>
+                <h1 class="display-4 mb-3 text-white"> الموسم الجامعي</h1>
                 <p class="lead mb-4">انضم إلينا وطور مهاراتك مع أفضل الدورات التدريبية</p>
                 <div class="d-inline-flex align-items-center gap-3">
                     <div class="d-flex align-items-center">
@@ -282,7 +285,7 @@
 
         <!-- Requirements Info -->
         <div class="requirements-card">
-            <h5 class="fw-bold text-primary mb-3">
+            <h5 class="fw-bold text-white mb-3">
                 <i class="bx bx-info-circle me-2"></i>
                 متطلبات التقديم
             </h5>
@@ -420,12 +423,12 @@
                         <i class="bx bx-filter me-1"></i>تصفية حسب التخصص
                     </label>
                     <div class="d-flex flex-wrap gap-2">
-                        <div class="category-filter active badge bg-light text-dark p-2 px-3" data-category="all">
+                        <div class="category-filter active badge bg-light p-2 px-3" data-category="all">
                             <i class="bx bx-grid-alt me-1"></i>
                             جميع الدورات
                         </div>
                         @foreach ($categories as $category)
-                            <div class="category-filter badge bg-light text-dark p-2 px-3"
+                            <div class="category-filter badge bg-light p-2 px-3"
                                 data-category="{{ $category->id }}">
                                 <i class="bx bx-book me-1"></i>
                                 {{ $category->name }}
