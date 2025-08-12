@@ -207,8 +207,24 @@
                         </ul>
                     </li>
 
-
-
+                    <li class="menu-item">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-user-check"></i>
+                            <div class="text-truncate" data-i18n="Admin Management">إدارة المشرفين</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="{{ route('admin.profile.edit') }}" class="menu-link">
+                                    <div class="text-truncate">تحديث الملف الشخصي</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('admin.admins.create') }}" class="menu-link">
+                                    <div class="text-truncate">إضافة مدير جديد</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
                     <li class="menu-item">
                         <a href="{{ route('admin.logout') }}" class="menu-link"

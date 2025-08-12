@@ -11,15 +11,15 @@
         margin-bottom: 2rem;
         border-radius: 15px;
     }
-    
+
     .detail-card {
         background: white;
         border-radius: 15px;
         padding: 1.5rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         margin-bottom: 1.5rem;
     }
-    
+
     .student-avatar {
         width: 80px;
         height: 80px;
@@ -33,32 +33,32 @@
         font-weight: bold;
         margin-right: 1rem;
     }
-    
+
     .status-badge {
         padding: 0.5rem 1rem;
         border-radius: 25px;
         font-weight: 600;
         font-size: 0.9rem;
     }
-    
+
     .status-unregistered {
         background: #fff3cd;
         color: #856404;
         border: 1px solid #ffeaa7;
     }
-    
+
     .status-registered {
         background: #d4edda;
         color: #155724;
         border: 1px solid #c3e6cb;
     }
-    
+
     .status-waiting {
         background: #e2e3e5;
         color: #383d41;
         border: 1px solid #d6d8db;
     }
-    
+
     .course-card {
         background: #f8f9fa;
         border-radius: 10px;
@@ -66,36 +66,36 @@
         margin-bottom: 0.75rem;
         border-left: 4px solid #667eea;
     }
-    
+
     .info-item {
         margin-bottom: 1rem;
         padding: 0.75rem;
         background: #f8f9fa;
         border-radius: 8px;
     }
-    
+
     .info-label {
         font-weight: 600;
         color: #495057;
         margin-bottom: 0.25rem;
         font-size: 0.9rem;
     }
-    
+
     .info-value {
         color: #212529;
         font-size: 1rem;
     }
-    
+
     .action-buttons .btn {
         margin: 0.25rem;
         min-width: 120px;
     }
-    
+
     .timeline {
         position: relative;
         padding-left: 2rem;
     }
-    
+
     .timeline::before {
         content: '';
         position: absolute;
@@ -105,7 +105,7 @@
         width: 2px;
         background: #dee2e6;
     }
-    
+
     .timeline-item {
         position: relative;
         margin-bottom: 1.5rem;
@@ -114,7 +114,7 @@
         border-radius: 8px;
         border: 1px solid #dee2e6;
     }
-    
+
     .timeline-item::before {
         content: '';
         position: absolute;
@@ -127,14 +127,14 @@
         border-radius: 50%;
         box-shadow: 0 0 0 2px #667eea;
     }
-    
+
     @media (max-width: 768px) {
         .student-info {
             flex-direction: column;
             text-align: center;
             gap: 1rem;
         }
-        
+
         .action-buttons .btn {
             width: 100%;
             margin-bottom: 0.5rem;
@@ -167,19 +167,19 @@
 
     <div class="container">
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bx bx-check-circle me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bx bx-check-circle me-2"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
         @endif
 
         @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bx bx-error-circle me-2"></i>
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bx bx-error-circle me-2"></i>
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
         @endif
 
         <div class="row">
@@ -236,135 +236,80 @@
                         <i class="bx bx-book-open text-primary me-2"></i>
                         الدورات المختارة ({{ count($selectedCourses) }} دورة)
                     </h5>
-                    
+
                     @if($selectedCourses->count() > 0)
-                        <div class="row">
-                            @foreach($selectedCourses as $course)
-                            <div class="col-md-6 mb-3">
-                                <div class="course-card">
-                                    <h6 class="mb-2">{{ $course->title }}</h6>
-                                    <p class="text-muted small mb-2">{{ $course->description }}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">
-                                            <i class="bx bx-group me-1"></i>
-                                            السعة: {{ $course->capacity_limit }}
-                                        </small>
-                                        <small class="text-muted">
-                                            <i class="bx bx-calendar me-1"></i>
-                                            {{ $course->start_time ? \Carbon\Carbon::parse($course->start_time)->format('Y/m/d') : 'غير محدد' }}
-                                        </small>
-                                    </div>
+                    <div class="row">
+                        @foreach($selectedCourses as $course)
+                        <div class="col-md-6 mb-3">
+                            <div class="course-card">
+                                <h6 class="mb-2">{{ $course->title }}</h6>
+                                <p class="text-muted small mb-2">{{ $course->description }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="bx bx-group me-1"></i>
+                                        السعة: {{ $course->capacity_limit }}
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bx bx-calendar me-1"></i>
+                                        {{ $course->start_time ? \Carbon\Carbon::parse($course->start_time)->format('Y/m/d') : 'غير محدد' }}
+                                    </small>
                                 </div>
                             </div>
-                            @endforeach
                         </div>
+                        @endforeach
+                    </div>
                     @else
-                        <div class="text-center py-4">
-                            <i class="bx bx-book-open display-4 text-muted"></i>
-                            <p class="text-muted mt-2">لم يتم تحديد دورات لهذا الطلب</p>
-                        </div>
+                    <div class="text-center py-4">
+                        <i class="bx bx-book-open display-4 text-muted"></i>
+                        <p class="text-muted mt-2">لم يتم تحديد دورات لهذا الطلب</p>
+                    </div>
                     @endif
                 </div>
             </div>
 
             <!-- Status and Actions -->
-            <div class="col-lg-4">
-                <!-- Current Status -->
-                <div class="detail-card">
-                    <h5 class="mb-3">
-                        <i class="bx bx-flag text-primary me-2"></i>
-                        حالة الطلب
-                    </h5>
-                    <div class="text-center mb-3">
-                        <span class="status-badge status-{{ $application->status }}">
-                            {{ $application->status_label }}
-                        </span>
+            <!-- <div class="col-lg-4"> -->
+            <!-- Current Status -->
+            <!-- <div class="detail-card"> -->
+
+            <!-- </div> -->
+
+            <!-- Application Timeline -->
+            <div class="detail-card">
+                <h5 class="mb-3">
+                    <i class="bx bx-time-five text-primary me-2"></i>
+                    سجل الأحداث
+                </h5>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h6 class="mb-1">تم تقديم الطلب</h6>
+                        <small class="text-muted">{{ $application->created_at->format('Y/m/d H:i') }}</small>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="action-buttons">
-                        @if($application->status === 'unregistered')
-                            @if($application->canBeRegistered())
-                                <form action="{{ route('admin.applications.register', $application) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="bx bx-check me-2"></i>قبول وتسجيل
-                                    </button>
-                                </form>
-                            @else
-                                <button class="btn btn-outline-success" disabled title="بعض الدورات مكتملة العدد">
-                                    <i class="bx bx-check me-2"></i>قبول وتسجيل
-                                </button>
-                            @endif
-
-                            <form action="{{ route('admin.applications.waiting', $application) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="btn btn-warning">
-                                    <i class="bx bx-time me-2"></i>قائمة انتظار
-                                </button>
-                            </form>
-                        @else
-                            <form action="{{ route('admin.applications.unregister', $application) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="btn btn-outline-secondary">
-                                    <i class="bx bx-undo me-2"></i>إعادة للمراجعة
-                                </button>
-                            </form>
-                        @endif
-
-                        <a href="{{ route('admin.applications.edit', $application) }}" class="btn btn-outline-primary">
-                            <i class="bx bx-edit me-2"></i>تعديل البيانات
-                        </a>
-
-                        <form action="{{ route('admin.applications.destroy', $application) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا الطلب؟')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-outline-danger">
-                                <i class="bx bx-trash me-2"></i>حذف الطلب
-                            </button>
-                        </form>
+                    @if($application->updated_at != $application->created_at)
+                    <div class="timeline-item">
+                        <h6 class="mb-1">آخر تحديث</h6>
+                        <small class="text-muted">{{ $application->updated_at->format('Y/m/d H:i') }}</small>
                     </div>
+                    @endif
+
+                    @if($application->status === 'registered')
+                    <div class="timeline-item">
+                        <h6 class="mb-1">تم قبول الطلب</h6>
+                        <small class="text-success">مقبول للتسجيل</small>
+                    </div>
+                    @elseif($application->status === 'waiting')
+                    <div class="timeline-item">
+                        <h6 class="mb-1">في قائمة الانتظار</h6>
+                        <small class="text-warning">بانتظار توفر مقعد</small>
+                    </div>
+                    @endif
                 </div>
+            </div>
 
-                <!-- Application Timeline -->
-                <div class="detail-card">
-                    <h5 class="mb-3">
-                        <i class="bx bx-time-five text-primary me-2"></i>
-                        سجل الأحداث
-                    </h5>
-                    
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <h6 class="mb-1">تم تقديم الطلب</h6>
-                            <small class="text-muted">{{ $application->created_at->format('Y/m/d H:i') }}</small>
-                        </div>
-                        
-                        @if($application->updated_at != $application->created_at)
-                        <div class="timeline-item">
-                            <h6 class="mb-1">آخر تحديث</h6>
-                            <small class="text-muted">{{ $application->updated_at->format('Y/m/d H:i') }}</small>
-                        </div>
-                        @endif
-                        
-                        @if($application->status === 'registered')
-                        <div class="timeline-item">
-                            <h6 class="mb-1">تم قبول الطلب</h6>
-                            <small class="text-success">مقبول للتسجيل</small>
-                        </div>
-                        @elseif($application->status === 'waiting')
-                        <div class="timeline-item">
-                            <h6 class="mb-1">في قائمة الانتظار</h6>
-                            <small class="text-warning">بانتظار توفر مقعد</small>
-                        </div>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- Quick Stats -->
-                <div class="detail-card">
+            <!-- Quick Stats -->
+            <!-- <div class="detail-card">
                     <h5 class="mb-3">
                         <i class="bx bx-stats text-primary me-2"></i>
                         إحصائيات سريعة
@@ -390,37 +335,37 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div> -->
         </div>
     </div>
+</div>
 </div>
 @endsection
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-hide alerts after 5 seconds
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        setTimeout(() => {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        }, 5000);
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-hide alerts after 5 seconds
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        });
 
-    // Confirmation for status changes
-    const forms = document.querySelectorAll('form[action*="register"], form[action*="waiting"], form[action*="unregister"]');
-    forms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            const button = form.querySelector('button[type="submit"]');
-            const action = button.textContent.trim();
-            
-            if (!confirm(`هل أنت متأكد من ${action}؟`)) {
-                e.preventDefault();
-            }
+        // Confirmation for status changes
+        const forms = document.querySelectorAll('form[action*="register"], form[action*="waiting"], form[action*="unregister"]');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const button = form.querySelector('button[type="submit"]');
+                const action = button.textContent.trim();
+
+                if (!confirm(`هل أنت متأكد من ${action}؟`)) {
+                    e.preventDefault();
+                }
+            });
         });
     });
-});
 </script>
 @endpush
