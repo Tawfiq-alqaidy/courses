@@ -58,5 +58,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Enrollments Management
         Route::resource('enrollments', \App\Http\Controllers\Admin\EnrollmentController::class);
+
+        // Admin Management Routes
+        Route::get('/profile', [\App\Http\Controllers\Admin\AdminController::class, 'showProfile'])->name('profile.edit');
+        Route::put('/profile', [\App\Http\Controllers\Admin\AdminController::class, 'updateProfile'])->name('profile.update');
+        Route::get('/admins/create', [\App\Http\Controllers\Admin\AdminController::class, 'showCreateAdmin'])->name('admins.create');
+        Route::post('/admins', [\App\Http\Controllers\Admin\AdminController::class, 'storeAdmin'])->name('admins.store');
     });
 });
