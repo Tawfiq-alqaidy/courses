@@ -12,24 +12,24 @@
         text-align: center;
         margin-bottom: 2rem;
     }
-    
+
     .student-info-card {
         background: white;
         border-radius: 15px;
         padding: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
     }
-    
+
     .course-card {
         background: white;
         border-radius: 15px;
         padding: 1.5rem;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         margin-bottom: 1rem;
         border-left: 4px solid #667eea;
     }
-    
+
     .status-badge {
         display: inline-block;
         padding: 0.5rem 1rem;
@@ -37,33 +37,33 @@
         font-weight: bold;
         font-size: 0.9rem;
     }
-    
+
     .status-registered {
         background: #d4edda;
         color: #155724;
     }
-    
+
     .status-waiting {
         background: #fff3cd;
         color: #856404;
     }
-    
+
     .status-unregistered {
         background: #f8d7da;
         color: #721c24;
     }
-    
+
     .timeline {
         position: relative;
         padding: 1rem 0;
     }
-    
+
     .timeline-item {
         position: relative;
         padding-left: 3rem;
         margin-bottom: 1.5rem;
     }
-    
+
     .timeline-item:before {
         content: '';
         position: absolute;
@@ -74,7 +74,7 @@
         background: #667eea;
         border-radius: 50%;
     }
-    
+
     .timeline-item:after {
         content: '';
         position: absolute;
@@ -84,32 +84,32 @@
         height: calc(100% - 0.5rem);
         background: #e9ecef;
     }
-    
+
     .timeline-item:last-child:after {
         display: none;
     }
-    
+
     .capacity-progress {
         background: #e9ecef;
         border-radius: 10px;
         height: 8px;
         overflow: hidden;
     }
-    
+
     .capacity-bar {
         height: 100%;
         border-radius: 10px;
         transition: width 0.3s ease;
     }
-    
+
     .capacity-available {
         background: linear-gradient(90deg, #28a745, #20c997);
     }
-    
+
     .capacity-almost-full {
         background: linear-gradient(90deg, #ffc107, #fd7e14);
     }
-    
+
     .capacity-full {
         background: linear-gradient(90deg, #dc3545, #e83e8c);
     }
@@ -154,7 +154,7 @@
                         </p>
                     </div>
                 </div>
-                
+
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <label class="form-label small text-muted fw-bold">حالة الطلب</label>
@@ -178,62 +178,62 @@
                     <i class="bx bx-book-open me-2"></i>
                     الدورات المختارة ({{ count($application->selected_courses ?? []) }})
                 </h4>
-                
+
                 @forelse($application->getSelectedCoursesDetails() as $course)
-                    <div class="course-card">
-                        <div class="row align-items-center">
-                            <div class="col-lg-8">
-                                <h5 class="fw-bold mb-2">{{ $course->title }}</h5>
-                                <p class="text-muted mb-2">{{ $course->description }}</p>
-                                <div class="d-flex flex-wrap gap-3 small">
-                                    <div>
-                                        <i class="bx bx-calendar text-primary me-1"></i>
-                                        <strong>البداية:</strong>
-                                        {{ $course->start_time ? $course->start_time->format('Y/m/d') : 'غير محدد' }}
-                                    </div>
-                                    <div>
-                                        <i class="bx bx-time text-primary me-1"></i>
-                                        <strong>المدة:</strong>
-                                        {{ $course->duration ?? 'غير محددة' }}
-                                    </div>
+                <div class="course-card">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <h5 class="fw-bold mb-2">{{ $course->title }}</h5>
+                            <p class="text-muted mb-2">{{ $course->description }}</p>
+                            <div class="d-flex flex-wrap gap-3 small">
+                                <div>
+                                    <i class="bx bx-calendar text-primary me-1"></i>
+                                    <strong>البداية:</strong>
+                                    {{ $course->start_time ? $course->start_time->format('Y/m/d') : 'غير محدد' }}
                                 </div>
-                            </div>
-                            <div class="col-lg-4 text-lg-end">
-                                <div class="mb-2">
-                                    <span class="small text-muted">السعة:</span>
-                                    <strong>{{ $course->registered_students_count ?? 0 }}/{{ $course->capacity_limit }}</strong>
+                                <div>
+                                    <i class="bx bx-time text-primary me-1"></i>
+                                    <strong>المدة:</strong>
+                                    {{ $course->duration ?? 'غير محددة' }}
                                 </div>
-                                <div class="capacity-progress mb-2">
-                                    @php
-                                        $percentage = $course->capacity_limit > 0 ? (($course->registered_students_count ?? 0) / $course->capacity_limit) * 100 : 0;
-                                        $barClass = $percentage >= 100 ? 'capacity-full' : ($percentage >= 80 ? 'capacity-almost-full' : 'capacity-available');
-                                    @endphp
-                                    <div class="capacity-bar {{ $barClass }}" style="width: {{ min($percentage, 100) }}%"></div>
-                                </div>
-                                <div class="small text-center">
-                                    @if($percentage >= 100)
-                                        <span class="text-danger fw-bold">مكتملة</span>
-                                    @elseif($percentage >= 80)
-                                        <span class="text-warning fw-bold">شبه مكتملة</span>
-                                    @else
-                                        <span class="text-success fw-bold">متاحة</span>
-                                    @endif
-                                </div>
-                                
-                                @if($application->status === 'waiting')
-                                    <div class="mt-2">
-                                        <small class="text-muted d-block">موضع في قائمة الانتظار:</small>
-                                        <strong class="text-warning">#{{ $application->getWaitingListPosition($course->id) }}</strong>
-                                    </div>
-                                @endif
                             </div>
                         </div>
+                        <div class="col-lg-4 text-lg-end">
+                            <div class="mb-2">
+                                <span class="small text-muted">السعة:</span>
+                                <strong>{{ $course->registered_students_count ?? 0 }}/{{ $course->capacity_limit }}</strong>
+                            </div>
+                            <div class="capacity-progress mb-2">
+                                @php
+                                $percentage = $course->capacity_limit > 0 ? (($course->registered_students_count ?? 0) / $course->capacity_limit) * 100 : 0;
+                                $barClass = $percentage >= 100 ? 'capacity-full' : ($percentage >= 80 ? 'capacity-almost-full' : 'capacity-available');
+                                @endphp
+                                <div class="capacity-bar {{ $barClass }}" style="width: {{ min($percentage, 100) }}%"></div>
+                            </div>
+                            <div class="small text-center">
+                                @if($percentage >= 100)
+                                <span class="text-danger fw-bold">مكتملة</span>
+                                @elseif($percentage >= 80)
+                                <span class="text-warning fw-bold">شبه مكتملة</span>
+                                @else
+                                <span class="text-success fw-bold">متاحة</span>
+                                @endif
+                            </div>
+
+                            @if($application->status === 'waiting')
+                            <div class="mt-2">
+                                <small class="text-muted d-block">موضع في قائمة الانتظار:</small>
+                                <strong class="text-warning">#{{ $application->getWaitingListPosition($course->id) }}</strong>
+                            </div>
+                            @endif
+                        </div>
                     </div>
+                </div>
                 @empty
-                    <div class="alert alert-warning">
-                        <i class="bx bx-info-circle me-2"></i>
-                        لم يتم العثور على دورات مختارة
-                    </div>
+                <div class="alert alert-warning">
+                    <i class="bx bx-info-circle me-2"></i>
+                    لم يتم العثور على دورات مختارة
+                </div>
                 @endforelse
             </div>
         </div>
@@ -250,22 +250,22 @@
                         <div class="fw-semibold">تم تقديم الطلب</div>
                         <div class="small text-muted">{{ $application->created_at->format('Y/m/d H:i') }}</div>
                     </div>
-                    
+
                     @if($application->status === 'registered')
-                        <div class="timeline-item">
-                            <div class="fw-semibold text-success">تم قبول الطلب</div>
-                            <div class="small text-muted">تم تسجيلك بنجاح في الدورات</div>
-                        </div>
+                    <div class="timeline-item">
+                        <div class="fw-semibold text-success">تم قبول الطلب</div>
+                        <div class="small text-muted">تم تسجيلك بنجاح في الدورات</div>
+                    </div>
                     @elseif($application->status === 'waiting')
-                        <div class="timeline-item">
-                            <div class="fw-semibold text-warning">في قائمة الانتظار</div>
-                            <div class="small text-muted">سيتم تسجيلك عند توفر أماكن</div>
-                        </div>
+                    <div class="timeline-item">
+                        <div class="fw-semibold text-warning">في قائمة الانتظار</div>
+                        <div class="small text-muted">سيتم تسجيلك عند توفر أماكن</div>
+                    </div>
                     @else
-                        <div class="timeline-item">
-                            <div class="fw-semibold text-muted">في انتظار المراجعة</div>
-                            <div class="small text-muted">سيتم مراجعة طلبك قريباً</div>
-                        </div>
+                    <div class="timeline-item">
+                        <div class="fw-semibold text-muted">في انتظار المراجعة</div>
+                        <div class="small text-muted">سيتم مراجعة طلبك قريباً</div>
+                    </div>
                     @endif
                 </div>
             </div>
@@ -316,27 +316,28 @@
 
 @push('scripts')
 <script>
-function shareStatus() {
-    if (navigator.share) {
-        navigator.share({
-            title: 'حالة طلب التسجيل',
-            text: 'حالة طلب التسجيل - رمز الطالب: {{ $application->unique_student_code }}',
-            url: window.location.href
-        });
-    } else {
-        // Fallback: copy to clipboard
-        navigator.clipboard.writeText(window.location.href).then(function() {
-            alert('تم نسخ رابط الصفحة');
-        });
+    function shareStatus() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'حالة طلب التسجيل',
+                text: 'حالة طلب التسجيل - رمز الطالب: {{ $application->unique_student_code }}',
+                url: window.location.href
+            });
+        } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(window.location.href).then(function() {
+                alert('تم نسخ رابط الصفحة');
+            });
+        }
     }
-}
 
-// Auto-refresh page every 5 minutes if status is waiting
-@if($application->status === 'waiting')
-    setTimeout(() => {
-        location.reload();
-    }, 5 * 60 * 1000); // 5 minutes
-@endif
+    // Auto-refresh page every 5 minutes if status is waiting
+    var applicationStatus = '{{ $application->status }}';
+    if (applicationStatus === 'waiting') {
+        setTimeout(() => {
+            location.reload();
+        }, 5 * 60 * 1000); // 5 minutes
+    }
 </script>
 @endpush
 @endsection
