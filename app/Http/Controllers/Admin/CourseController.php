@@ -25,44 +25,69 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Course::with(['category', 'enrollments']);
+        $query = Course::with(['category', 'enrollments']); // Eager load relationships
+
+        // Store base query for statistics
+        $baseQuery = clone $query;
 
         // Filter by search
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $searchCondition = function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
+            };
+            $query->where($searchCondition);
+            $baseQuery->where($searchCondition);
         }
 
         // Filter by category
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
+            $baseQuery->where('category_id', $request->category);
         }
 
         // Filter by status
         if ($request->filled('status')) {
             $now = now();
-            switch ($request->status) {
-                case 'upcoming':
-                    $query->where('start_time', '>', $now);
-                    break;
-                case 'ongoing':
-                    $query->where('start_time', '<=', $now)
-                        ->where(function ($q) use ($now) {
-                            $q->whereNull('end_time')
-                                ->orWhere('end_time', '>', $now);
-                        });
-                    break;
-                case 'ended':
-                    $query->where('end_time', '<=', $now);
-                    break;
-            }
+            $statusCondition = function ($q) use ($request, $now) {
+                switch ($request->status) {
+                    case 'upcoming':
+                        $q->where('start_time', '>', $now);
+                        break;
+                    case 'ongoing':
+                        $q->where('start_time', '<=', $now)
+                            ->where(function ($subQ) use ($now) {
+                                $subQ->whereNull('end_time')
+                                    ->orWhere('end_time', '>', $now);
+                            });
+                        break;
+                    case 'ended':
+                        $q->where('end_time', '<=', $now);
+                        break;
+                }
+            };
+            $query->where($statusCondition);
+            $baseQuery->where($statusCondition);
         }
 
         // Sort
         $sortField = $request->get('sort', 'created_at');
         $query->orderBy($sortField, 'desc');
 
-        $courses = $query->paginate(15);
+        // Server-side pagination with 10 records per page
+        $courses = $query->paginate(5);
         $categories = Category::all();
+
+        // Calculate statistics for all filtered records (not just current page)
+        $stats = [
+            'total' => $baseQuery->count(),
+            'upcoming' => (clone $baseQuery)->where('start_time', '>', now())->count(),
+            'ongoing' => (clone $baseQuery)->where('start_time', '<=', now())
+                ->where(function ($q) {
+                    $q->whereNull('end_time')->orWhere('end_time', '>', now());
+                })->count(),
+            'ended' => (clone $baseQuery)->where('end_time', '<=', now())->count(),
+        ];
 
         // Load enrollment counts for each course using the proper Enrollment model
         foreach ($courses as $course) {
@@ -71,7 +96,7 @@ class CourseController extends Controller
             $course->pending_enrollments = $course->enrollments()->where('status', 'pending')->count();
         }
 
-        return view('admin.courses.index', compact('courses', 'categories'));
+        return view('admin.courses.index', compact('courses', 'categories', 'stats'));
     }
 
     /**

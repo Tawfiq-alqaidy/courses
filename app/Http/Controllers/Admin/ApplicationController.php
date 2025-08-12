@@ -25,22 +25,30 @@ class ApplicationController extends Controller
     public function index(Request $request)
     {
         $query = Application::query()
-            ->with('category')
+            ->with(['category', 'student']) // Eager load relationships to avoid N+1 queries
             ->latest();
+
+        // Store base query for statistics
+        $baseQuery = clone $query;
 
         // Apply filters
         if ($request->filled('status')) {
             $query->where('status', $request->status);
+            $baseQuery->where('status', $request->status);
         }
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
+            $baseQuery->where('category_id', $request->category);
         }
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
+            $searchCondition = function ($q) use ($search) {
                 $q->where('student_name', 'like', "%{$search}%")
-                    ->orWhere('student_email', 'like', "%{$search}%");
-            });
+                    ->orWhere('student_email', 'like', "%{$search}%")
+                    ->orWhere('student_phone', 'like', "%{$search}%");
+            };
+            $query->where($searchCondition);
+            $baseQuery->where($searchCondition);
         }
 
         // Apply sorting
@@ -52,10 +60,58 @@ class ApplicationController extends Controller
             $query->orderBy('created_at', 'desc');
         }
 
-        $applications = $query->paginate(15);
+        // Server-side pagination with 10 records per page
+        $applications = $query->paginate(5);
+
+        // Preload all courses needed for the current page to avoid N+1 queries
+        $this->preloadCoursesForApplications($applications);
+
+        // Calculate statistics for all filtered records (not just current page)
+        $stats = [
+            'total' => $baseQuery->count(),
+            'unregistered' => (clone $baseQuery)->where('status', 'unregistered')->count(),
+            'registered' => (clone $baseQuery)->where('status', 'registered')->count(),
+            'waiting' => (clone $baseQuery)->where('status', 'waiting')->count(),
+        ];
+
+        // Get categories for filter dropdown
         $categories = Category::all();
 
-        return view('admin.applications.index', compact('applications', 'categories'));
+        return view('admin.applications.index', compact('applications', 'categories', 'stats'));
+    }
+
+    /**
+     * Preload courses for applications to avoid N+1 queries
+     */
+    private function preloadCoursesForApplications($applications)
+    {
+        // Get all course IDs from all applications
+        $courseIds = $applications->pluck('selected_courses')
+            ->filter()
+            ->flatten()
+            ->unique()
+            ->values()
+            ->toArray();
+
+        if (empty($courseIds)) {
+            return;
+        }
+
+        // Load all courses at once
+        $courses = Course::whereIn('id', $courseIds)->get()->keyBy('id');
+
+        // Attach courses to each application
+        foreach ($applications as $application) {
+            if (!empty($application->selected_courses) && is_array($application->selected_courses)) {
+                $application->loadedCourses = collect($application->selected_courses)
+                    ->map(function ($courseId) use ($courses) {
+                        return $courses->get($courseId);
+                    })
+                    ->filter(); // Remove null courses (deleted ones)
+            } else {
+                $application->loadedCourses = collect();
+            }
+        }
     }
 
     /**

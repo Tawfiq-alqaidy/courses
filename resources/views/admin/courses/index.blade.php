@@ -117,6 +117,58 @@
         opacity: 0.9;
     }
 
+    /* Enhanced Pagination Styling */
+    .pagination-wrapper {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-top: 1px solid #e9ecef;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .pagination-info {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+    }
+
+    .pagination {
+        margin: 0;
+        justify-content: center;
+    }
+
+    .page-link {
+        border: 1px solid #dee2e6;
+        color: #495057;
+        padding: 0.5rem 0.75rem;
+        margin: 0 0.125rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+
+    .page-link:hover {
+        background: #667eea;
+        border-color: #667eea;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+    }
+
+    .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: #667eea;
+        color: white;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    }
+
+    .page-item.disabled .page-link {
+        background: #f8f9fa;
+        border-color: #dee2e6;
+        color: #6c757d;
+        cursor: not-allowed;
+    }
+
     @media (max-width: 768px) {
         .table-responsive {
             font-size: 0.875rem;
@@ -130,6 +182,25 @@
             margin-bottom: 0.25rem;
             font-size: 0.75rem;
             padding: 0.25rem 0.5rem;
+        }
+
+        .pagination-wrapper {
+            padding: 1rem;
+        }
+
+        .pagination-info {
+            text-align: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .page-link {
+            padding: 0.375rem 0.5rem;
+            font-size: 0.875rem;
         }
     }
 </style>
@@ -153,20 +224,20 @@
                         <div class="row">
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <span class="number">{{ $courses->total() }}</span>
+                                    <span class="number">{{ $stats['total'] }}</span>
                                     <span class="label">إجمالي</span>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <span class="number">{{ $courses->where('start_time', '>', now())->count() }}</span>
+                                    <span class="number">{{ $stats['upcoming'] }}</span>
                                     <span class="label">قادمة</span>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <span class="number">{{ $categories->count() }}</span>
-                                    <span class="label">تخصص</span>
+                                    <span class="number">{{ $stats['ongoing'] }}</span>
+                                    <span class="label">جارية</span>
                                 </div>
                             </div>
                         </div>
@@ -363,9 +434,26 @@
             </div>
 
             @if($courses->hasPages())
-            <!-- <div class="p-4 border-top">
-                {{ $courses->appends(request()->query())->links() }}
-            </div> -->
+            <div class="pagination-wrapper">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="pagination-info">
+                            <span>عرض {{ $courses->firstItem() ?? 0 }} إلى {{ $courses->lastItem() ?? 0 }} من أصل {{ $courses->total() }} نتيجة</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-md-end justify-content-center">
+                            {{ $courses->appends(request()->query())->links('custom.pagination') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @else
+            <div class="pagination-wrapper">
+                <div class="pagination-info text-center">
+                    <span>عرض {{ $courses->count() }} من أصل {{ $courses->count() }} نتيجة</span>
+                </div>
+            </div>
             @endif
         </div>
     </div>
