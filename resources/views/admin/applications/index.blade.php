@@ -16,7 +16,7 @@
         background: white;
         border-radius: 15px;
         padding: 1.5rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
     }
 
@@ -24,7 +24,7 @@
         background: white;
         border-radius: 15px;
         overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     }
 
     .table th {
@@ -128,7 +128,7 @@
     }
 
     .stats-row {
-        background: rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
@@ -217,11 +217,11 @@
 
     <div class="container">
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bx bx-check-circle me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bx bx-check-circle me-2"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
         @endif
 
         <!-- Filters -->
@@ -230,20 +230,20 @@
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">البحث</label>
                     <input type="text"
-                           name="search"
-                           class="form-control"
-                           placeholder="اسم الطالب أو البريد..."
-                           value="{{ request('search') }}">
+                        name="search"
+                        class="form-control"
+                        placeholder="اسم الطالب أو البريد..."
+                        value="{{ request('search') }}">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">التخصص</label>
                     <select name="category" class="form-select">
                         <option value="">جميع التخصصات</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}"
-                                    {{ request('category') == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
+                        <option value="{{ $category->id }}"
+                            {{ request('category') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -273,7 +273,7 @@
                             <i class="bx bx-refresh me-1"></i>إعادة تعيين
                         </a>
                         <button type="button" class="btn btn-success" onclick="exportApplications()">
-                            <i class="bx bx-export me-1"></i>تصدير
+                            <i class="bx bx-export me-1"></i>Export to Excel
                         </button>
                     </div>
                 </div>
@@ -325,7 +325,7 @@
                         <tr>
                             <td>
                                 <input type="checkbox" class="form-check-input application-checkbox"
-                                       value="{{ $application->id }}">
+                                    value="{{ $application->id }}">
                             </td>
                             <td>
                                 <div class="student-info">
@@ -349,11 +349,11 @@
                             <td>
                                 <div class="courses-list">
                                     @if($application->selected_courses && is_array($application->selected_courses))
-                                        @foreach($application->getSelectedCoursesDetails() as $course)
-                                            <span class="course-tag">{{ $course->title }}</span>
-                                        @endforeach
+                                    @foreach($application->getSelectedCoursesDetails() as $course)
+                                    <span class="course-tag">{{ $course->title }}</span>
+                                    @endforeach
                                     @else
-                                        <span class="text-muted">لا توجد دورات محددة</span>
+                                    <span class="text-muted">لا توجد دورات محددة</span>
                                     @endif
                                 </div>
                             </td>
@@ -365,10 +365,10 @@
                                     {{ $application->status_label }}
                                 </span>
                                 @if($application->status === 'waiting')
-                                    <div class="small text-muted mt-1">
-                                        <i class="bx bx-list-ol"></i>
-                                        موضع {{ $application->getWaitingListPosition() }} في قائمة الانتظار
-                                    </div>
+                                <div class="small text-muted mt-1">
+                                    <i class="bx bx-list-ol"></i>
+                                    موضع {{ $application->getWaitingListPosition() }} في قائمة الانتظار
+                                </div>
                                 @endif
                             </td>
                             <td>
@@ -379,45 +379,45 @@
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="{{ route('admin.applications.show', $application) }}"
+                                    <!-- <a href="{{ route('admin.applications.show', $application) }}"
                                        class="btn btn-outline-primary btn-sm"
                                        title="عرض التفاصيل">
                                         <i class="bx bx-show"></i>
-                                    </a>
+                                    </a> -->
 
                                     @if($application->status === 'unregistered')
-                                        <button class="btn btn-outline-success btn-sm"
-                                                onclick="updateStatus({{ $application->id }}, 'register')"
-                                                title="قبول الطلب">
-                                            <i class="bx bx-check"></i>
-                                        </button>
-                                        <button class="btn btn-outline-warning btn-sm"
-                                                onclick="updateStatus({{ $application->id }}, 'waiting')"
-                                                title="قائمة انتظار">
-                                            <i class="bx bx-time"></i>
-                                        </button>
+                                    <button class="btn btn-outline-success btn-sm"
+                                        onclick="updateStatus({{ $application->id }}, 'register')"
+                                        title="قبول الطلب">
+                                        <i class="bx bx-check"></i>
+                                    </button>
+                                    <button class="btn btn-outline-warning btn-sm"
+                                        onclick="updateStatus({{ $application->id }}, 'waiting')"
+                                        title="قائمة انتظار">
+                                        <i class="bx bx-time"></i>
+                                    </button>
                                     @elseif($application->status === 'waiting')
-                                        <button class="btn btn-outline-info btn-sm"
-                                                onclick="promoteFromWaiting({{ $application->id }})"
-                                                title="ترقية من قائمة الانتظار">
-                                            <i class="bx bx-up-arrow-alt"></i>
-                                        </button>
-                                        <button class="btn btn-outline-secondary btn-sm"
-                                                onclick="updateStatus({{ $application->id }}, 'unregister')"
-                                                title="إعادة للمراجعة">
-                                            <i class="bx bx-undo"></i>
-                                        </button>
+                                    <button class="btn btn-outline-info btn-sm"
+                                        onclick="promoteFromWaiting({{ $application->id }})"
+                                        title="ترقية من قائمة الانتظار">
+                                        <i class="bx bx-up-arrow-alt"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm"
+                                        onclick="updateStatus({{ $application->id }}, 'unregister')"
+                                        title="إعادة للمراجعة">
+                                        <i class="bx bx-undo"></i>
+                                    </button>
                                     @elseif($application->status === 'registered')
-                                        <button class="btn btn-outline-secondary btn-sm"
-                                                onclick="updateStatus({{ $application->id }}, 'unregister')"
-                                                title="إلغاء التسجيل (سيرقى طلاب الانتظار تلقائياً)">
-                                            <i class="bx bx-undo"></i>
-                                        </button>
+                                    <button class="btn btn-outline-secondary btn-sm"
+                                        onclick="updateStatus({{ $application->id }}, 'unregister')"
+                                        title="إلغاء التسجيل (سيرقى طلاب الانتظار تلقائياً)">
+                                        <i class="bx bx-undo"></i>
+                                    </button>
                                     @endif
 
                                     <button class="btn btn-outline-danger btn-sm"
-                                            onclick="deleteApplication({{ $application->id }})"
-                                            title="حذف الطلب">
+                                        onclick="deleteApplication({{ $application->id }})"
+                                        title="حذف الطلب">
                                         <i class="bx bx-trash"></i>
                                     </button>
                                 </div>
@@ -437,9 +437,9 @@
             </div>
 
             @if($applications->hasPages())
-                <div class="p-4 border-top">
-                    {{ $applications->appends(request()->query())->links() }}
-                </div>
+            <div class="p-4 border-top">
+                {{ $applications->appends(request()->query())->links() }}
+            </div>
             @endif
         </div>
     </div>
@@ -467,206 +467,245 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const selectAllCheckbox = document.getElementById('selectAll');
-    const applicationCheckboxes = document.querySelectorAll('.application-checkbox');
-    const bulkActionsDiv = document.getElementById('bulkActions');
-    const selectedCountSpan = document.getElementById('selectedCount');
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const applicationCheckboxes = document.querySelectorAll('.application-checkbox');
+        const bulkActionsDiv = document.getElementById('bulkActions');
+        const selectedCountSpan = document.getElementById('selectedCount');
 
-    // Select All functionality
-    selectAllCheckbox?.addEventListener('change', function() {
-        applicationCheckboxes.forEach(checkbox => {
-            checkbox.checked = this.checked;
+        // Select All functionality
+        selectAllCheckbox?.addEventListener('change', function() {
+            applicationCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateBulkActions();
         });
-        updateBulkActions();
+
+        // Individual checkbox functionality
+        applicationCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateBulkActions);
+        });
+
+        function updateBulkActions() {
+            const selectedCheckboxes = document.querySelectorAll('.application-checkbox:checked');
+            const count = selectedCheckboxes.length;
+
+            selectedCountSpan.textContent = count;
+
+            if (count > 0) {
+                bulkActionsDiv.classList.add('show');
+            } else {
+                bulkActionsDiv.classList.remove('show');
+            }
+
+            // Update select all checkbox state
+            if (selectAllCheckbox) {
+                selectAllCheckbox.indeterminate = count > 0 && count < applicationCheckboxes.length;
+                selectAllCheckbox.checked = count === applicationCheckboxes.length;
+            }
+        }
     });
 
-    // Individual checkbox functionality
-    applicationCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateBulkActions);
-    });
+    function updateStatus(applicationId, status) {
+        const statusLabels = {
+            'register': 'قبول',
+            'waiting': 'نقل إلى قائمة الانتظار',
+            'unregister': 'إعادة للمراجعة'
+        };
 
-    function updateBulkActions() {
-        const selectedCheckboxes = document.querySelectorAll('.application-checkbox:checked');
-        const count = selectedCheckboxes.length;
-
-        selectedCountSpan.textContent = count;
-
-        if (count > 0) {
-            bulkActionsDiv.classList.add('show');
-        } else {
-            bulkActionsDiv.classList.remove('show');
-        }
-
-        // Update select all checkbox state
-        if (selectAllCheckbox) {
-            selectAllCheckbox.indeterminate = count > 0 && count < applicationCheckboxes.length;
-            selectAllCheckbox.checked = count === applicationCheckboxes.length;
-        }
+        showConfirmModal(
+            `هل تريد ${statusLabels[status]} هذا الطلب؟`,
+            () => {
+                fetch(`/admin/applications/${applicationId}/${status}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            status: status
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        location.reload();
+                    })
+                    .catch(error => {
+                        location.reload();
+                        console.error('Error:', error);
+                    });
+            }
+        );
     }
-});
 
-function updateStatus(applicationId, status) {
-    const statusLabels = {
-        'register': 'قبول',
-        'waiting': 'نقل إلى قائمة الانتظار',
-        'unregister': 'إعادة للمراجعة'
-    };
+    function promoteFromWaiting(applicationId) {
+        console.log(applicationId)
+        showConfirmModal(
+            'هل تريد ترقية هذا الطالب من قائمة الانتظار؟',
+            () => {
+                fetch(`/admin/applications/${applicationId}/promote`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        location.reload();
+                    })
+                    .catch(error => {
+                        location.reload();
+                        console.error('Error:', error);
+                    });
+            }
+        );
+    }
 
-    showConfirmModal(
-        `هل تريد ${statusLabels[status]} هذا الطلب؟`,
-        () => {
-            fetch(`/admin/applications/${applicationId}/${status}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ status: status })
-            })
-            .then(response => response.json())
-            .then(data => {
-                location.reload();
-            })
-            .catch(error => {
-                location.reload();
-                console.error('Error:', error);
-            });
-        }
-    );
-}
-
-function promoteFromWaiting(applicationId) {
-    console.log(applicationId)
-    showConfirmModal(
-        'هل تريد ترقية هذا الطالب من قائمة الانتظار؟',
-        () => {
-            fetch(`/admin/applications/${applicationId}/promote`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                location.reload();
-            })
-            .catch(error => {
-                location.reload();
-                console.error('Error:', error);
-            });
-        }
-    );
-}
-
-function deleteApplication(applicationId) {
-    showConfirmModal(
-        'هل أنت متأكد من حذف هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.',
-        () => {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `{{ route('admin.applications.index') }}/${applicationId}`;
-            form.innerHTML = `
+    function deleteApplication(applicationId) {
+        showConfirmModal(
+            'هل أنت متأكد من حذف هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.',
+            () => {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `{{ route('admin.applications.index') }}/${applicationId}`;
+                form.innerHTML = `
                 @csrf
                 @method('DELETE')
             `;
-            document.body.appendChild(form);
-            form.submit();
-        },
-        'btn-danger'
-    );
-}
+                document.body.appendChild(form);
+                form.submit();
+            },
+            'btn-danger'
+        );
+    }
 
-function bulkAction(status) {
-    const selectedIds = Array.from(document.querySelectorAll('.application-checkbox:checked'))
-        .map(checkbox => checkbox.value);
+    function bulkAction(status) {
+        const selectedIds = Array.from(document.querySelectorAll('.application-checkbox:checked'))
+            .map(checkbox => checkbox.value);
 
-    if (selectedIds.length === 0) return;
+        if (selectedIds.length === 0) return;
 
-    const statusLabels = {
-        'registered': 'قبول',
-        'waiting': 'نقل إلى قائمة الانتظار'
-    };
+        const statusLabels = {
+            'registered': 'قبول',
+            'waiting': 'نقل إلى قائمة الانتظار'
+        };
 
-    showConfirmModal(
-        `هل تريد ${statusLabels[status]} الطلبات المحددة (${selectedIds.length} طلب)؟`,
-        () => {
-            fetch('{{ route("admin.applications.bulk-update") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    ids: selectedIds,
-                    status: status
-                })
+        showConfirmModal(
+            `هل تريد ${statusLabels[status]} الطلبات المحددة (${selectedIds.length} طلب)؟`,
+            () => {
+                fetch('{{ route("admin.applications.bulk-update") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            ids: selectedIds,
+                            status: status
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        location.reload();
+                    })
+                    .catch(error => {
+                        location.reload();
+                        console.error('Error:', error);
+                    });
+            }
+        );
+    }
+
+    function bulkDelete() {
+        const selectedIds = Array.from(document.querySelectorAll('.application-checkbox:checked'))
+            .map(checkbox => checkbox.value);
+
+        if (selectedIds.length === 0) return;
+
+        showConfirmModal(
+            `هل أنت متأكد من حذف الطلبات المحددة (${selectedIds.length} طلب)؟ لا يمكن التراجع عن هذا الإجراء.`,
+            () => {
+                fetch('{{ route("admin.applications.bulk-delete") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            ids: selectedIds
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        location.reload();
+                    })
+                    .catch(error => {
+                        location.reload();
+                        console.error('Error:', error);
+                    });
+            },
+            'btn-danger'
+        );
+    }
+
+    function exportApplications() {
+        const params = new URLSearchParams(window.location.search);
+        const url = '{{ route("admin.applications.export") }}?' + params.toString();
+
+        fetch(url)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok.');
+                }
+                const disposition = res.headers.get('Content-Disposition');
+                let filename = 'applications.xlsx'; // Default filename
+                if (disposition && disposition.indexOf('attachment') !== -1) {
+                    const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    const matches = filenameRegex.exec(disposition);
+                    if (matches != null && matches[1]) {
+                        filename = matches[1].replace(/['"]/g, '');
+                    }
+                }
+                return res.blob().then(blob => ({
+                    blob,
+                    filename
+                }));
             })
-            .then(response => response.json())
-            .then(data => {
-                location.reload();
+            .then(({
+                blob,
+                filename
+            }) => {
+                const a = document.createElement('a');
+                const objectUrl = window.URL.createObjectURL(blob);
+                a.href = objectUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(objectUrl);
             })
             .catch(error => {
-                location.reload();
-                console.error('Error:', error);
+                console.error('There has been a problem with your fetch operation:', error);
+                // Fallback to original method if fetch fails
+                window.location.href = url;
             });
-        }
-    );
-}
+    }
 
-function bulkDelete() {
-    const selectedIds = Array.from(document.querySelectorAll('.application-checkbox:checked'))
-        .map(checkbox => checkbox.value);
+    function showConfirmModal(message, onConfirm, buttonClass = 'btn-primary') {
+        const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        const messageElement = document.getElementById('confirmMessage');
+        const confirmButton = document.getElementById('confirmAction');
 
-    if (selectedIds.length === 0) return;
+        messageElement.textContent = message;
+        confirmButton.className = `btn ${buttonClass}`;
 
-    showConfirmModal(
-        `هل أنت متأكد من حذف الطلبات المحددة (${selectedIds.length} طلب)؟ لا يمكن التراجع عن هذا الإجراء.`,
-        () => {
-            fetch('{{ route("admin.applications.bulk-delete") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    ids: selectedIds
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                location.reload();
-            })
-            .catch(error => {
-                location.reload();
-                console.error('Error:', error);
-            });
-        },
-        'btn-danger'
-    );
-}
+        confirmButton.onclick = () => {
+            modal.hide();
+            onConfirm();
+        };
 
-function exportApplications() {
-    const params = new URLSearchParams(window.location.search);
-    params.set('export', 'excel');
-    window.location.href = '{{ route("admin.applications.index") }}?' + params.toString();
-}
-
-function showConfirmModal(message, onConfirm, buttonClass = 'btn-primary') {
-    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
-    const messageElement = document.getElementById('confirmMessage');
-    const confirmButton = document.getElementById('confirmAction');
-
-    messageElement.textContent = message;
-    confirmButton.className = `btn ${buttonClass}`;
-
-    confirmButton.onclick = () => {
-        modal.hide();
-        onConfirm();
-    };
-
-    modal.show();
-}
+        modal.show();
+    }
 </script>
 @endpush
