@@ -15,7 +15,14 @@ class ApplicationController extends Controller
     public function showForm()
     {
         $categories = Category::all();
-        $courses = Course::all();
+        $courses = Course::with(['category', 'enrollments'])
+            ->where('status', 'active')
+            ->get();
+
+        // Load enrollment counts for each course
+        foreach ($courses as $course) {
+            $course->registered_students_count = $course->getCurrentEnrolledCount();
+        }
 
         return view('application-form', compact('categories', 'courses'));
     }
@@ -57,7 +64,7 @@ class ApplicationController extends Controller
         // Check for time conflicts between selected courses
         $courses = Course::whereIn('id', $selectedCourses)->get();
         $conflictingCourses = $this->checkTimeConflicts($courses);
-        
+
         if (!empty($conflictingCourses)) {
             $conflictMessage = 'يوجد تعارض في المواعيد بين الدورات التالية: ' . implode(' و ', $conflictingCourses);
             return back()->withErrors(['selected_courses' => $conflictMessage])
@@ -119,23 +126,25 @@ class ApplicationController extends Controller
     {
         $conflictingCourses = [];
         $coursesArray = $courses->toArray();
-        
+
         for ($i = 0; $i < count($coursesArray); $i++) {
             for ($j = $i + 1; $j < count($coursesArray); $j++) {
                 $course1 = $coursesArray[$i];
                 $course2 = $coursesArray[$j];
-                
+
                 // Skip if either course doesn't have start/end times
-                if (!$course1['start_time'] || !$course1['end_time'] || 
-                    !$course2['start_time'] || !$course2['end_time']) {
+                if (
+                    !$course1['start_time'] || !$course1['end_time'] ||
+                    !$course2['start_time'] || !$course2['end_time']
+                ) {
                     continue;
                 }
-                
+
                 $start1 = \Carbon\Carbon::parse($course1['start_time']);
                 $end1 = \Carbon\Carbon::parse($course1['end_time']);
                 $start2 = \Carbon\Carbon::parse($course2['start_time']);
                 $end2 = \Carbon\Carbon::parse($course2['end_time']);
-                
+
                 // Check if courses overlap in time
                 if ($this->timesOverlap($start1, $end1, $start2, $end2)) {
                     $conflictKey = $course1['title'] . ' - ' . $course2['title'];
@@ -145,7 +154,7 @@ class ApplicationController extends Controller
                 }
             }
         }
-        
+
         return $conflictingCourses;
     }
 
@@ -158,7 +167,7 @@ class ApplicationController extends Controller
         if (!$start1->isSameDay($start2)) {
             return false;
         }
-        
+
         // Check if time periods overlap on the same day
         // Two time periods overlap if: start1 < end2 AND start2 < end1
         return $start1->lt($end2) && $start2->lt($end1);

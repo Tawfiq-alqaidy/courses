@@ -363,9 +363,9 @@
             </div>
 
             @if($courses->hasPages())
-            <div class="p-4 border-top">
+            <!-- <div class="p-4 border-top">
                 {{ $courses->appends(request()->query())->links() }}
-            </div>
+            </div> -->
             @endif
         </div>
     </div>
