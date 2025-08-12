@@ -6,8 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\Category;
 use App\Models\Course;
+use App\Exports\ApplicationsExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Response;
+use Maatwebsite\Excel\Facades\Excel;
+
+
+
 
 class ApplicationController extends Controller
 {
@@ -17,49 +24,38 @@ class ApplicationController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Application::with(['category']);
+        $query = Application::query()
+            ->with('category')
+            ->latest();
 
-        // Filter by status
+        // Apply filters
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-
-        // Filter by category
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
         }
-
-        // Search by name or email
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('student_name', 'like', "%{$search}%")
-                  ->orWhere('student_email', 'like', "%{$search}%")
-                  ->orWhere('unique_student_code', 'like', "%{$search}%");
+                    ->orWhere('student_email', 'like', "%{$search}%");
             });
         }
 
-        // Date range filter
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
+        // Apply sorting
+        if ($request->get('sort') === 'student_name') {
+            $query->orderBy('student_name');
+        } elseif ($request->get('sort') === 'status') {
+            $query->orderBy('status');
+        } else {
+            $query->orderBy('created_at', 'desc');
         }
 
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        $applications = $query->latest()->paginate(15);
+        $applications = $query->paginate(15);
         $categories = Category::all();
 
-        // Statistics
-        $stats = [
-            'total' => Application::count(),
-            'registered' => Application::registered()->count(),
-            'waiting' => Application::waiting()->count(),
-            'unregistered' => Application::unregistered()->count()
-        ];
-
-        return view('admin.applications.index', compact('applications', 'categories', 'stats'));
+        return view('admin.applications.index', compact('applications', 'categories'));
     }
 
     /**
@@ -98,9 +94,9 @@ class ApplicationController extends Controller
 
         // Verify selected courses belong to the selected category
         $selectedCourses = Course::whereIn('id', $validated['selected_courses'])
-                                ->where('category_id', $validated['category_id'])
-                                ->pluck('id')
-                                ->toArray();
+            ->where('category_id', $validated['category_id'])
+            ->pluck('id')
+            ->toArray();
 
         if (count($selectedCourses) !== count($validated['selected_courses'])) {
             return back()->withErrors(['selected_courses' => 'الدورات المختارة لا تنتمي إلى الفئة المحددة']);
@@ -125,7 +121,7 @@ class ApplicationController extends Controller
         $application->delete();
 
         return redirect()->route('admin.applications.index')
-                        ->with('success', 'تم حذف الطلب بنجاح');
+            ->with('success', 'تم حذف الطلب بنجاح');
     }
 
     /**
@@ -156,7 +152,7 @@ class ApplicationController extends Controller
      */
     public function unregister(Application $application)
     {
-       $application->update(['status' => 'unregistered']);
+        $application->update(['status' => 'unregistered']);
         return redirect()->back()->with('success', 'تم إلغاء تسجيل الطلب وترقية طلاب قائمة الانتظار تلقائياً');
     }
 
@@ -327,5 +323,19 @@ class ApplicationController extends Controller
         }
 
         return redirect()->back()->with('success', $message);
+    }
+
+    /**
+     * Export applications to Excel (.xlsx) format only
+     * No alerts, immediate download, handles thousands of records efficiently
+     */
+    public function export(Request $request)
+    {
+        try {
+            return Excel::download(new ApplicationsExport($request), 'applications.xlsx');
+        } catch (\Exception $e) {
+            Log::error('Excel export failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'حدث خطأ أثناء تصدير البيانات. الرجاء المحاولة مرة أخرى.');
+        }
     }
 }
