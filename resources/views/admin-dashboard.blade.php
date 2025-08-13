@@ -486,7 +486,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-3">
-                                    <span class="badge bg-primary">{{ $application->category->name }}</span>
+                                    <span class="badge bg-primary">{{ $application->category?->name ?? 'جميع التخصصات' }}</span>
                                 </div>
                                 <div class="col-md-2">
                                     <span class="status-badge 

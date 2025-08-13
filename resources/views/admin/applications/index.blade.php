@@ -302,7 +302,7 @@
                     <input type="text"
                         name="search"
                         class="form-control"
-                        placeholder="اسم الطالب أو البريد..."
+                        placeholder="اسم الطالب، البريد، أو رقم الطالب..."
                         value="{{ request('search') }}">
                 </div>
                 <div class="col-md-2">
@@ -414,7 +414,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-primary">{{ $application->category->name }}</span>
+                                <span class="badge bg-primary">{{ $application->category?->name ?? 'جميع التخصصات' }}</span>
                             </td>
                             <td>
                                 <div class="courses-list">

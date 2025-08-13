@@ -45,7 +45,8 @@ class ApplicationController extends Controller
             $searchCondition = function ($q) use ($search) {
                 $q->where('student_name', 'like', "%{$search}%")
                     ->orWhere('student_email', 'like', "%{$search}%")
-                    ->orWhere('student_phone', 'like', "%{$search}%");
+                    ->orWhere('student_phone', 'like', "%{$search}%")
+                    ->orWhere('unique_student_code', 'like', "%{$search}%");
             };
             $query->where($searchCondition);
             $baseQuery->where($searchCondition);
@@ -167,6 +168,39 @@ class ApplicationController extends Controller
         ]);
 
         return redirect()->route('admin.applications.index')->with('success', 'تم تحديث الطلب بنجاح');
+    }
+
+    /**
+     * Update courses for an application and optionally approve/reject
+     */
+    public function updateCourses(Request $request, Application $application)
+    {
+        $validated = $request->validate([
+            'selected_courses' => 'array',
+            'selected_courses.*' => 'exists:courses,id',
+            'action' => 'required|in:update_courses,approve,reject'
+        ]);
+
+        $selectedCourses = $validated['selected_courses'] ?? [];
+
+        // Update the selected courses
+        $application->update([
+            'selected_courses' => $selectedCourses
+        ]);
+
+        $message = 'تم تحديث الدورات المختارة بنجاح';
+
+        // Handle approval/rejection
+        if ($validated['action'] === 'approve') {
+            $application->update(['status' => 'registered']);
+            $message = 'تم قبول الطلب وتحديث الدورات بنجاح';
+        } elseif ($validated['action'] === 'reject') {
+            $application->update(['status' => 'waiting']);
+            $message = 'تم رفض الطلب';
+        }
+
+        return redirect()->route('admin.applications.show', $application)
+                        ->with('success', $message);
     }
 
     /**

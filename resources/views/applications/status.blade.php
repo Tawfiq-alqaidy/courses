@@ -150,7 +150,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label small text-muted fw-bold">التخصص</label>
                         <p class="mb-0">
-                            <span class="badge bg-primary">{{ $application->category->name }}</span>
+                            <span class="badge bg-primary">{{ $application->category?->name ?? 'جميع التخصصات' }}</span>
                         </p>
                     </div>
                 </div>

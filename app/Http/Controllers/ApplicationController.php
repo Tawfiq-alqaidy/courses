@@ -60,10 +60,13 @@ class ApplicationController extends Controller
             'password' => bcrypt('temporary123') // User can change later
         ]);
 
-        // Generate unique student code
-        $uniqueCode = 'ST' . date('Y') . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        // Generate unique student code starting from #0000001
+        $lastApplication = Application::orderBy('id', 'desc')->first();
+        $nextNumber = $lastApplication ? $lastApplication->id + 1 : 1;
+        $uniqueCode = '#' . str_pad($nextNumber, 7, '0', STR_PAD_LEFT);
         while (Application::where('unique_student_code', $uniqueCode)->exists()) {
-            $uniqueCode = 'ST' . date('Y') . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $nextNumber++;
+            $uniqueCode = '#' . str_pad($nextNumber, 7, '0', STR_PAD_LEFT);
         }
 
         // Verify selected courses belong to the selected category, unless 'all' is selected
@@ -97,7 +100,7 @@ class ApplicationController extends Controller
             'student_name' => $validated['student_name'],
             'student_email' => $validated['student_email'],
             'student_phone' => $validated['student_phone'],
-            'category_id' => $validated['category_id'],
+            'category_id' => $validated['category_id'] === 'all' ? null : $validated['category_id'],
             'selected_courses' => $selectedCourses,
             'unique_student_code' => $uniqueCode,
             // Status will be automatically determined in the model
