@@ -380,7 +380,7 @@
                         </label>
                         <select class="form-select form-select-lg @error('category_id') is-invalid @enderror"
                             id="category_id" name="category_id" required>
-                            <option value="">اختر التخصص المناسب لك</option>
+                            <option value="all" {{ old('category_id') == 'all' ? 'selected' : '' }}>جميع التخصصات</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}"
                                     {{ old('category_id') == $category->id ? 'selected' : '' }}>

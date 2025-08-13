@@ -36,7 +36,7 @@ class ApplicationController extends Controller
             'student_name' => 'required|string|max:255',
             'student_email' => 'required|email|max:255|unique:applications,student_email',
             'student_phone' => 'required|string|max:20',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'required',
             'selected_courses' => 'required|array|min:1',
             'selected_courses.*' => 'exists:courses,id'
         ], [
@@ -66,15 +66,19 @@ class ApplicationController extends Controller
             $uniqueCode = 'ST' . date('Y') . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
         }
 
-        // Verify selected courses belong to the selected category
-        $selectedCourses = Course::whereIn('id', $validated['selected_courses'])
-            ->where('category_id', $validated['category_id'])
-            ->pluck('id')
-            ->toArray();
+        // Verify selected courses belong to the selected category, unless 'all' is selected
+        if ($validated['category_id'] !== 'all') {
+            $selectedCourses = Course::whereIn('id', $validated['selected_courses'])
+                ->where('category_id', $validated['category_id'])
+                ->pluck('id')
+                ->toArray();
 
-        if (count($selectedCourses) !== count($validated['selected_courses'])) {
-            return back()->withErrors(['selected_courses' => 'الدورات المختارة لا تنتمي إلى الفئة المحددة'])
-                ->withInput();
+            if (count($selectedCourses) !== count($validated['selected_courses'])) {
+                return back()->withErrors(['selected_courses' => 'الدورات المختارة لا تنتمي إلى الفئة المحددة'])
+                    ->withInput();
+            }
+        } else {
+            $selectedCourses = $validated['selected_courses'];
         }
 
         // Check for time conflicts between selected courses
@@ -165,7 +169,8 @@ class ApplicationController extends Controller
 
                 // Check if courses overlap in time
                 if ($this->timesOverlap($start1, $end1, $start2, $end2)) {
-                    $conflictKey = $course1['title'] . ' - ' . $course2['title'];
+                    $conflictKey = $course1['title'] . ' (' . $start1->format('H:i') . '-' . $end1->format('H:i') . ')'
+                        . ' - ' . $course2['title'] . ' (' . $start2->format('H:i') . '-' . $end2->format('H:i') . ')';
                     if (!in_array($conflictKey, $conflictingCourses)) {
                         $conflictingCourses[] = $conflictKey;
                     }
