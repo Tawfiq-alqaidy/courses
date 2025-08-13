@@ -158,6 +158,21 @@ class ApplicationController extends Controller
             return back()->withErrors(['selected_courses' => 'الدورات المختارة لا تنتمي إلى الفئة المحددة']);
         }
 
+        // Check for time conflicts between selected courses
+        $courses = Course::whereIn('id', $selectedCourses)->get();
+        $conflicts = Course::findConflicts($courses);
+
+        if (!empty($conflicts)) {
+            $conflictMessages = array_map(function ($conflict) {
+                return $conflict['message'];
+            }, $conflicts);
+
+            $conflictMessage = 'يوجد تعارض في المواعيد بين الدورات المختارة:<br><br>';
+            $conflictMessage .= '• ' . implode('<br>• ', $conflictMessages);
+
+            return back()->withErrors(['selected_courses' => $conflictMessage]);
+        }
+
         $application->update([
             'student_name' => $validated['student_name'],
             'student_phone' => $validated['student_phone'],
