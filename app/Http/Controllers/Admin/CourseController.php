@@ -144,13 +144,21 @@ class CourseController extends Controller
     {
         $course->load(['category']);
 
-        // Get applications for this course
+        // Get applications for this course with detailed statistics
         $applications = \App\Models\Application::whereJsonContains('selected_courses', $course->id)
-            ->with('category')
+            ->with(['category', 'student'])
             ->latest()
-            ->paginate(10);
+            ->paginate(15);
 
-        return view('admin.courses.show', compact('course', 'applications'));
+        // Calculate statistics for this course
+        $stats = [
+            'total_applications' => \App\Models\Application::whereJsonContains('selected_courses', $course->id)->count(),
+            'registered' => \App\Models\Application::whereJsonContains('selected_courses', $course->id)->where('status', 'registered')->count(),
+            'unregistered' => \App\Models\Application::whereJsonContains('selected_courses', $course->id)->where('status', 'unregistered')->count(),
+            'waiting' => \App\Models\Application::whereJsonContains('selected_courses', $course->id)->where('status', 'waiting')->count(),
+        ];
+
+        return view('admin.courses.show', compact('course', 'applications', 'stats'));
     }
 
     /**

@@ -238,58 +238,26 @@
                     </h5>
 
                     @if($selectedCourses->count() > 0)
-                    <form id="courseReviewForm" method="POST" action="{{ route('admin.applications.update-courses', $application) }}">
-                        @csrf
-                        @method('PATCH')
-                        <div class="row">
-                            @foreach($selectedCourses as $course)
-                            <div class="col-md-6 mb-3">
-                                <div class="course-card">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h6 class="mb-2">{{ $course->title }}</h6>
-                                        <div class="form-check">
-                                            <input class="form-check-input course-checkbox" type="checkbox" 
-                                                   name="selected_courses[]" value="{{ $course->id }}" 
-                                                   id="course_{{ $course->id }}" checked>
-                                            <label class="form-check-label text-success" for="course_{{ $course->id }}">
-                                                <small>موافق عليها</small>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <p class="text-muted small mb-2">{{ $course->description }}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">
-                                            <i class="bx bx-group me-1"></i>
-                                            السعة: {{ $course->capacity_limit }}
-                                        </small>
-                                        <small class="text-muted">
-                                            <i class="bx bx-calendar me-1"></i>
-                                            {{ $course->start_time ? \Carbon\Carbon::parse($course->start_time)->format('Y/m/d') : 'غير محدد' }}
-                                        </small>
-                                    </div>
+                    <div class="row">
+                        @foreach($selectedCourses as $course)
+                        <div class="col-md-6 mb-3">
+                            <div class="course-card">
+                                <h6 class="mb-2">{{ $course->title }}</h6>
+                                <p class="text-muted small mb-2">{{ $course->description }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="bx bx-group me-1"></i>
+                                        السعة: {{ $course->capacity_limit }}
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bx bx-calendar me-1"></i>
+                                        {{ $course->start_time ? \Carbon\Carbon::parse($course->start_time)->format('Y/m/d') : 'غير محدد' }}
+                                    </small>
                                 </div>
                             </div>
-                            @endforeach
                         </div>
-                        
-                        <div class="action-buttons mt-4 text-center">
-                            <button type="button" class="btn btn-secondary" onclick="selectAllCourses()">
-                                <i class="bx bx-check-square me-1"></i>تحديد الكل
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="deselectAllCourses()">
-                                <i class="bx bx-square me-1"></i>إلغاء تحديد الكل
-                            </button>
-                            <button type="submit" name="action" value="update_courses" class="btn btn-primary">
-                                <i class="bx bx-save me-1"></i>تحديث الدورات المختارة
-                            </button>
-                            <button type="submit" name="action" value="approve" class="btn btn-success">
-                                <i class="bx bx-check me-1"></i>موافقة على الطلب
-                            </button>
-                            <button type="submit" name="action" value="reject" class="btn btn-danger">
-                                <i class="bx bx-x me-1"></i>رفض الطلب
-                            </button>
-                        </div>
-                    </form>
+                        @endforeach
+                    </div>
                     @else
                     <div class="text-center py-4">
                         <i class="bx bx-book-open display-4 text-muted"></i>
@@ -376,18 +344,6 @@
 
 @push('scripts')
 <script>
-    function selectAllCourses() {
-        document.querySelectorAll('.course-checkbox').forEach(checkbox => {
-            checkbox.checked = true;
-        });
-    }
-
-    function deselectAllCourses() {
-        document.querySelectorAll('.course-checkbox').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-    }
-
     document.addEventListener('DOMContentLoaded', function() {
         // Auto-hide alerts after 5 seconds
         const alerts = document.querySelectorAll('.alert');
