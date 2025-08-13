@@ -77,13 +77,13 @@ class Course extends Model
         // Count applications for this course that are registered
         $count = 0;
         $applications = Application::where('status', 'registered')->get();
-        
+
         foreach ($applications as $application) {
             if (in_array($this->id, $application->selected_courses ?? [])) {
                 $count++;
             }
         }
-        
+
         return $count;
     }
 
@@ -198,5 +198,10 @@ class Course extends Model
         }
         $enrolled = (int)$this->getCurrentEnrolledCount();
         return round(($enrolled / (float)$this->capacity_limit) * 100, 1);
+    }
+
+    public function getRegisteredStudentsCountAttribute()
+    {
+        return $this->getCurrentEnrolledCount();
     }
 }

@@ -293,7 +293,7 @@
             </div>
 
             <!-- Contact Support -->
-            <div class="student-info-card">
+            <!-- <div class="student-info-card">
                 <h6 class="fw-bold text-primary mb-2">
                     <i class="bx bx-support me-2"></i>
                     تحتاج مساعدة؟
@@ -309,7 +309,7 @@
                         920000000
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
