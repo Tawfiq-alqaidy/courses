@@ -856,7 +856,6 @@
         updateSubmitButton();
 
         // Auto-scroll to errors if present
-        @if($errors - > any())
         setTimeout(() => {
             const errorElement = document.querySelector('.error-list');
             if (errorElement) {
@@ -866,7 +865,6 @@
                 });
             }
         }, 500);
-        @endif
 
         // Add required field indicators
         const requiredLabels = document.querySelectorAll('.required');
