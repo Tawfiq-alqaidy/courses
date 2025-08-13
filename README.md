@@ -429,7 +429,7 @@ This course management system is **100% complete** and ready for production use.
 
 ---
 
-**Developer**: Course Management System Team  
+**Developer**: Tawfiq elqaidy
 **Framework**: Laravel 12  
 **Status**: Complete & Production Ready  
 **Last Updated**: August 2025
