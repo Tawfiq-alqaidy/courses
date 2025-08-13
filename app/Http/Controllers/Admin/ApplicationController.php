@@ -143,26 +143,31 @@ class ApplicationController extends Controller
         $validated = $request->validate([
             'student_name' => 'required|string|max:255',
             'student_phone' => 'required|string|max:20',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'required',
             'selected_courses' => 'required|array|min:1',
             'selected_courses.*' => 'exists:courses,id',
             'status' => 'required|in:unregistered,registered,waiting'
         ]);
 
-        // Verify selected courses belong to the selected category
-        $selectedCourses = Course::whereIn('id', $validated['selected_courses'])
-            ->where('category_id', $validated['category_id'])
-            ->pluck('id')
-            ->toArray();
+        // If 'all' is selected, skip category validation
+        if ($validated['category_id'] !== 'all') {
+            // Verify selected courses belong to the selected category
+            $selectedCourses = Course::whereIn('id', $validated['selected_courses'])
+                ->where('category_id', $validated['category_id'])
+                ->pluck('id')
+                ->toArray();
 
-        if (count($selectedCourses) !== count($validated['selected_courses'])) {
-            return back()->withErrors(['selected_courses' => 'الدورات المختارة لا تنتمي إلى الفئة المحددة']);
+            if (count($selectedCourses) !== count($validated['selected_courses'])) {
+                return back()->withErrors(['selected_courses' => 'الدورات المختارة لا تنتمي إلى الفئة المحددة']);
+            }
+        } else {
+            $selectedCourses = $validated['selected_courses'];
         }
 
         $application->update([
             'student_name' => $validated['student_name'],
             'student_phone' => $validated['student_phone'],
-            'category_id' => $validated['category_id'],
+            'category_id' => $validated['category_id'] === 'all' ? null : $validated['category_id'],
             'selected_courses' => $selectedCourses,
             'status' => $validated['status']
         ]);

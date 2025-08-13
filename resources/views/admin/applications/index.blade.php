@@ -455,6 +455,12 @@
                                         <i class="bx bx-show"></i>
                                     </a>
 
+                                    <a href="{{ route('admin.applications.edit', $application) }}"
+                                        class="btn btn-outline-info btn-sm"
+                                        title="تعديل الطلب">
+                                        <i class="bx bx-edit"></i>
+                                    </a>
+
                                     @if($application->status === 'unregistered')
                                     <button class="btn btn-outline-success btn-sm"
                                         onclick="updateStatus({{ $application->id }}, 'register')"
