@@ -195,20 +195,20 @@ php artisan enrollment:stats
 
 ### 👥 Public URLs:
 
--   **Application Form**: `http://localhost:8000/` or `http://localhost:8000/apply`
--   **Success Page**: `http://localhost:8000/success`
--   **Status Tracking**: `http://localhost:8000/status/{tracking_code}`
+-   **Application Form**: `www.utsu-academy.org.ly/` or `www.utsu-academy.org.ly/apply`
+-   **Success Page**: `www.utsu-academy.org.ly/success`
+-   **Status Tracking**: `www.utsu-academy.org.ly/status/{tracking_code}`
 
 ### 🔐 Admin URLs:
 
--   **Admin Login**: `http://localhost:8000/admin/login`
--   **Admin Dashboard**: `http://localhost:8000/admin/dashboard`
--   **Applications Management**: `http://localhost:8000/admin/applications`
--   **Enrollments Management**: `http://localhost:8000/admin/enrollments`
--   **Courses Management**: `http://localhost:8000/admin/courses`
--   **Categories Management**: `http://localhost:8000/admin/categories`
--   **Admin Profile**: `http://localhost:8000/admin/profile`
--   **Create New Admin**: `http://localhost:8000/admin/admins/create`
+-   **Admin Login**: `www.utsu-academy.org.ly/admin/login`
+-   **Admin Dashboard**: `www.utsu-academy.org.ly/admin/dashboard`
+-   **Applications Management**: `www.utsu-academy.org.ly/admin/applications`
+-   **Enrollments Management**: `www.utsu-academy.org.ly/admin/enrollments`
+-   **Courses Management**: `www.utsu-academy.org.ly/admin/courses`
+-   **Categories Management**: `www.utsu-academy.org.ly/admin/categories`
+-   **Admin Profile**: `www.utsu-academy.org.ly/admin/profile`
+-   **Create New Admin**: `www.utsu-academy.org.ly/admin/admins/create`
 
 ## 🔑 Default Login Credentials
 
